@@ -41,6 +41,7 @@ public class Enemy : MonoBehaviour {
     public Minion m_targetMinion;
     public Vector3 m_territoryPos { get; set; }
     private Vector2 m_vec = Vector2.zero;
+    private bool m_isArrive = false;
 
     // çUåÇä÷åW
     [SerializeField]
@@ -142,9 +143,11 @@ public class Enemy : MonoBehaviour {
                 }
                 else
                 {
-                    if (transform.position == m_territoryPos)
+                    if ((transform.position - m_territoryPos).magnitude<=0.1f)
                     {
+                        transform.position = m_territoryPos;
                         m_mode = ENEMY_MODE.WAIT;
+                        m_rigidbody.angularVelocity = 0.0f;
                         m_rigidbody.velocity = Vector2.zero;
                     }
                     UpdateMoveToTerritory();
@@ -174,7 +177,6 @@ public class Enemy : MonoBehaviour {
             case ENEMY_MODE.DEAD:
                 break;
         }
-
     }
 
     public void UpdateMoveToTarget()
@@ -195,7 +197,8 @@ public class Enemy : MonoBehaviour {
         Vector3 dir = m_velocity.normalized;
         if (m_mode == ENEMY_MODE.MOVE_TERRITORY)
         {
-            if((transform.position-m_territoryPos).magnitude<=m_speed)
+            Debug.Log("í∑Ç≥ÇÕ" + (transform.position - m_territoryPos).magnitude + "ë¨Ç≥ÇÕ" + m_speed);
+            if ((transform.position - m_territoryPos).magnitude <= m_speed)
             {
                 m_velocity = (transform.position - m_territoryPos).magnitude * dir;
             }
@@ -375,69 +378,5 @@ public class Enemy : MonoBehaviour {
     }
 
 
-    //IEnumerator Muteki()
-    //{
-    //    yield return new WaitForSeconds(m_mutekitime);
-    //    m_mutekiFlag = false;
-    //}
-
-    //IEnumerator ChangeColor()
-    //{
-    //    while (true)
-    //    {
-    //        var color = m_renderer.material.color;
-    //        color.a -= m_addAlpha;
-    //        if (color.a < 0.0f)
-    //        {
-    //            color.a = 0.0f;
-    //            m_addAlpha *= -1.0f;
-    //        }
-    //        if (color.a > 1.0f)
-    //        {
-    //            color.a = 1.0f;
-    //            m_addAlpha *= -1.0f;
-    //        }
-    //        m_renderer.material.color = color;
-    //        if (!m_mutekiFlag)
-    //        {
-    //            color.a = 1.0f;
-    //            m_addAlpha = 0.02f;
-    //            m_renderer.material.color = color;
-    //            yield break;
-    //        }
-    //        yield return null;
-    //    }
-    //}
-
-    //private void OnCollisionStay2D(Collision2D collision)
-    //{
-    //    if (collision.gameObject.tag == "Player" || collision.gameObject.tag == "Minion")
-    //    {
-    //        if (collision.gameObject.tag == "Minion" &&
-    //                m_minionController.m_mode != Minion.MINION_MODE.ATTACK) return;
-    //        if (m_mutekiFlag) return;
-    //        m_mutekiFlag = true;
-    //        m_HP--;
-    //        if (m_HP == 0)
-    //        {
-    //            gameObject.SetActive(false);
-    //        }
-    //        else
-    //        {
-    //            // êFÇïœÇ¶ÇÈ
-    //            StartCoroutine(Muteki());
-    //            StartCoroutine(ChangeColor());
-    //        }
-    //    }
-
-
-    //}
-    //private void OnCollisionEnter2D(Collision2D collision)
-    //{
-    //    if (collision.gameObject.tag == "Player" || collision.gameObject.tag == "Minion")
-    //    {
-    //        collision.gameObject.GetComponent<Rigidbody2D>().AddForce((collision.gameObject.transform.up * -1.0f) * 3.0f);
-    //    }
-    //}
 }
 
