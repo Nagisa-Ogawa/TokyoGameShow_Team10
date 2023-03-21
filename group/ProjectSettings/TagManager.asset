@@ -44,3 +44,15 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Stage
+    uniqueID: 1057657481
+    locked: 0
+  - name: Minion
+    uniqueID: 231742859
+    locked: 0
+  - name: Enemy
+    uniqueID: 2214476763
+    locked: 0
+  - name: Player
+    uniqueID: 2016476963
+    locked: 0

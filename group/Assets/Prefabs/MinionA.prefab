@@ -74,9 +74,9 @@ GameObject:
   - component: {fileID: 8581922048600788609}
   - component: {fileID: -4371522621259623738}
   - component: {fileID: -6042409668119381846}
-  - component: {fileID: 4068336343557143548}
+  - component: {fileID: -3639554530813530034}
   m_Layer: 0
-  m_Name: MinionB
+  m_Name: MinionA
   m_TagString: Minion
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -91,7 +91,7 @@ Transform:
   m_GameObject: {fileID: 8581922048600788608}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.5, y: 0.5, z: 0.6}
+  m_LocalScale: {x: 0.8, y: 1, z: 0.6}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7794901466857928056}
@@ -136,9 +136,9 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 2
+  m_SortingLayerID: 231742859
+  m_SortingLayer: 2
+  m_SortingOrder: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 75f5f34dc1b5347e0b8351032682f224, type: 3}
   m_Color: {r: 0.9056604, g: 0.13157704, b: 0.13157704, a: 1}
   m_FlipX: 0
@@ -165,18 +165,19 @@ MonoBehaviour:
   m_mode: 0
   m_type: 0
   m_HP: 2
-  m_damage: 1
+  m_damage: 2
   m_renderer: {fileID: 8581922048600788609}
   m_addAlpha: 0.02
-  m_attackTime: 1
+  m_attackTime: 2
   m_nowTime: 0
   m_afterAttackTime: 1
-  m_attackCoolDown: 1
+  m_attackCoolDown: 3
   m_attackedTime: 0
   m_color: {r: 0, g: 0, b: 0, a: 0}
   m_canAttack: 1
   m_escapeDistance: 10
   m_speed: 5
+  m_stopAttackDistance: 2
   m_Param: {fileID: 11400000, guid: 0233a49b32b0659458e2e0ebec4bbf45, type: 2}
 --- !u!50 &-6042409668119381846
 Rigidbody2D:
@@ -199,8 +200,8 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!61 &4068336343557143548
-BoxCollider2D:
+--- !u!58 &-3639554530813530034
+CircleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -212,16 +213,6 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0.21133333}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.28866667}
-    oldSize: {x: 1, y: 1}
-    newSize: {x: 1, y: 1}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
+  m_Offset: {x: 0, y: 0.044666708}
   serializedVersion: 2
-  m_Size: {x: 1, y: 1}
-  m_EdgeRadius: 0
+  m_Radius: 0.5324848
