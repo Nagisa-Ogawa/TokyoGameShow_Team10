@@ -1,0 +1,2 @@
+# TokyoGameShow_Team10
+東京ゲームショウアマチュア部門用作品
