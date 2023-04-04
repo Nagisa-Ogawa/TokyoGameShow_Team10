@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7794901466857928056}
   - component: {fileID: 1546270361453347278}
   - component: {fileID: 3380113475738247813}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: AttackCollider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -46,9 +46,9 @@ CircleCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0.1}
+  m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.76799756
+  m_Radius: 2.5
 --- !u!114 &3380113475738247813
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -75,7 +75,7 @@ GameObject:
   - component: {fileID: -4371522621259623738}
   - component: {fileID: -6042409668119381846}
   - component: {fileID: -3639554530813530034}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: MinionA
   m_TagString: Minion
   m_Icon: {fileID: 0}
@@ -91,7 +91,7 @@ Transform:
   m_GameObject: {fileID: 8581922048600788608}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.8, y: 1, z: 0.6}
+  m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7794901466857928056}
@@ -139,8 +139,8 @@ SpriteRenderer:
   m_SortingLayerID: 231742859
   m_SortingLayer: 2
   m_SortingOrder: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 75f5f34dc1b5347e0b8351032682f224, type: 3}
-  m_Color: {r: 0.9056604, g: 0.13157704, b: 0.13157704, a: 1}
+  m_Sprite: {fileID: 21300000, guid: 44f93fbeb8b846b44a8fc073dfbedcd2, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -164,19 +164,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_mode: 0
   m_type: 0
-  m_HP: 2
+  m_HP: 3
   m_damage: 2
   m_renderer: {fileID: 8581922048600788609}
   m_addAlpha: 0.02
   m_attackTime: 2
   m_nowTime: 0
   m_afterAttackTime: 1
-  m_attackCoolDown: 3
+  m_attackCoolDown: 2
   m_attackedTime: 0
   m_color: {r: 0, g: 0, b: 0, a: 0}
   m_canAttack: 1
   m_escapeDistance: 10
-  m_speed: 5
+  m_speed: 4
   m_stopAttackDistance: 2
   m_Param: {fileID: 11400000, guid: 0233a49b32b0659458e2e0ebec4bbf45, type: 2}
 --- !u!50 &-6042409668119381846
@@ -199,7 +199,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!58 &-3639554530813530034
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -213,6 +213,6 @@ CircleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0.044666708}
+  m_Offset: {x: 0.0293158, y: 0.04466653}
   serializedVersion: 2
-  m_Radius: 0.5324848
+  m_Radius: 1.6953613

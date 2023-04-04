@@ -17,16 +17,14 @@ public class EnemyAttackCollider : MonoBehaviour
         
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerStay2D(Collider2D collision)
     {
         if (collision.gameObject.tag == "Minion")
         {
             if (m_enemy.m_mode != Enemy.ENEMY_MODE.MOVE_ATTACK) return;
             // çUåÇÇ÷
+            //Debug.Log("kentisita");
             m_enemy.m_targetMinion = collision.gameObject.GetComponent<Minion>();
-            var rigidBody = m_enemy.GetComponent<Rigidbody2D>();
-            rigidBody.bodyType = RigidbodyType2D.Static;
-            rigidBody.velocity = Vector2.zero;
             m_enemy.m_mode = Enemy.ENEMY_MODE.SETUP_ATTACK;
         }
     }

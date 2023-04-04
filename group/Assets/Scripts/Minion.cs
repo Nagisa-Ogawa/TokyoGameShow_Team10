@@ -40,6 +40,8 @@ public class Minion:MonoBehaviour
     public float m_speed = 5.0f;
     [SerializeField]
     private float m_stopAttackDistance = 2.0f;
+    [SerializeField]
+    private float m_stopAttackBossDistance = 5.0f;
 
     public Param m_Param = null;
     public Rigidbody2D m_rigidbody { get; set; }
@@ -67,7 +69,7 @@ public class Minion:MonoBehaviour
     protected void Start()
     {
         m_pos = transform.position;
-        m_vec = transform.up * Random.Range(m_Param.minSpeed, m_Param.maxSpeed);
+        // m_vec = transform.up * Random.Range(m_Param.minSpeed, m_Param.maxSpeed);
         m_maxHP = m_HP;
     }
 
@@ -101,11 +103,12 @@ public class Minion:MonoBehaviour
                 }
                 break;
             case MINION_MODE.ESCAPE:
+                if (m_targetEnemy == null) return;
                 if((gameObject.transform.position-m_targetEnemy.transform.position).magnitude >m_escapeDistance)
                 {
                     m_mode = MINION_MODE.WAIT;
-                    var rot = Quaternion.FromToRotation(Vector3.up, m_target.transform.position - transform.position);
-                    transform.rotation = rot;
+                    //var rot = Quaternion.FromToRotation(Vector3.up, m_target.transform.position - transform.position);
+                    //transform.rotation = rot;
                     m_rigidbody.bodyType = RigidbodyType2D.Static;
                 }
                 else
@@ -226,6 +229,11 @@ public class Minion:MonoBehaviour
 
     public void UpdateMoveToTarget()
     {
+        if (m_target == null)
+        {
+            Debug.Log("ƒ^[ƒQƒbƒg‚ª‚¢‚Ü‚¹‚ñ");
+            return;
+        }
         m_vec = m_target.transform.position - transform.position;
     }
 
@@ -241,8 +249,8 @@ public class Minion:MonoBehaviour
         Vector3 dir = m_velocity.normalized;
         // float speed = Random.Range(m_Param.minSpeed, m_Param.maxSpeed);
         m_velocity = m_speed * dir;
-        var rot = Quaternion.FromToRotation(Vector3.up, m_velocity);
-        transform.rotation = rot;
+        //var rot = Quaternion.FromToRotation(Vector3.up, m_velocity);
+        //transform.rotation = rot;
         m_rigidbody.velocity = m_velocity;
         m_vec = Vector2.zero;
         // m_velocity = Vector2.zero;
@@ -254,9 +262,19 @@ public class Minion:MonoBehaviour
         {
             return true;
         }
-        if ((transform.position - m_targetEnemy.transform.position).magnitude >= m_stopAttackDistance)
+        if(m_targetEnemy.m_type==ENEMY_TYPE.ENEMY_A||m_targetEnemy.m_type==ENEMY_TYPE.ENEMY_B)
         {
-            return true;
+            if ((transform.position - m_targetEnemy.transform.position).magnitude >= m_stopAttackDistance)
+            {
+                return true;
+            }
+        }
+        else if(m_targetEnemy.m_type==ENEMY_TYPE.BOSS_B)
+        {
+            if ((transform.position - m_targetEnemy.transform.position).magnitude >= m_stopAttackBossDistance)
+            {
+                return true;
+            }
         }
         return false;
     }
@@ -274,10 +292,11 @@ public class Minion:MonoBehaviour
         {
             m_nowTime += Time.deltaTime;
             float ratio = m_nowTime / m_attackTime;
+            Debug.Log(ratio);
             var color = m_renderer.material.color;
             color.a = 1.0f - ratio;
             m_renderer.material.color = color;
-            if (ratio > 1.0f)
+            if (ratio > 0.8f)
             {
                 color.a = 1.0f;
                 m_renderer.material.color = color;
@@ -292,9 +311,9 @@ public class Minion:MonoBehaviour
 
     IEnumerator Attack()
     {
-        var color=m_renderer.material.color;
-        color = Color.black;
-        m_renderer.material.color = color;
+        //var color=m_renderer.material.color;
+        //color = Color.black;
+        //m_renderer.material.color = color;
         // “G‚ÌHP‚ğŒ¸‚ç‚·
         m_targetEnemy.Damage(m_damage);
         yield return new WaitForSeconds(m_afterAttackTime);
@@ -308,7 +327,6 @@ public class Minion:MonoBehaviour
     public void Damage(int damage)
     {
         m_HP-=damage;
-        Debug.Log("itai");
         if (m_HP > 0)
         {
             // ”í’eˆ—
@@ -322,6 +340,8 @@ public class Minion:MonoBehaviour
             m_renderer.material.color = m_color;
             m_rigidbody.bodyType = RigidbodyType2D.Dynamic;
             StopAllCoroutines();
+            m_target = null;
+            m_targetEnemy = null;
             m_nowTime = 0.0f;
         }
     }

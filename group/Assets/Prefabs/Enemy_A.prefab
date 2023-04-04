@@ -10,10 +10,10 @@ GameObject:
   m_Component:
   - component: {fileID: 2639703910480705719}
   - component: {fileID: 2639703910480705718}
+  - component: {fileID: 2639703910480705712}
   - component: {fileID: 2639703910480705717}
   - component: {fileID: 2639703910480705716}
-  - component: {fileID: 2639703910480705712}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Enemy_A
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 2639703910480705675}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.8, y: 1, z: 1}
+  m_LocalScale: {x: 0.3, y: 0.3, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3719965256846906738}
@@ -77,8 +77,8 @@ SpriteRenderer:
   m_SortingLayerID: -2080490533
   m_SortingLayer: 3
   m_SortingOrder: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 75f5f34dc1b5347e0b8351032682f224, type: 3}
-  m_Color: {r: 0.0047169924, g: 0.26375705, b: 1, a: 1}
+  m_Sprite: {fileID: 21300000, guid: 44f93fbeb8b846b44a8fc073dfbedcd2, type: 3}
+  m_Color: {r: 0.9716981, g: 0.3254272, b: 0.3254272, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -88,43 +88,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!58 &2639703910480705717
-CircleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2639703910480705675}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0.040018916}
-  serializedVersion: 2
-  m_Radius: 0.5400189
---- !u!50 &2639703910480705716
-Rigidbody2D:
-  serializedVersion: 4
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2639703910480705675}
-  m_BodyType: 0
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDrag: 0
-  m_AngularDrag: 0.05
-  m_GravityScale: 0
-  m_Material: {fileID: 0}
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 0
 --- !u!114 &2639703910480705712
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -141,7 +104,7 @@ MonoBehaviour:
   m_type: 0
   m_hpui: {fileID: 0}
   m_rigidbody: {fileID: 2639703910480705716}
-  m_HP: 10
+  m_HP: 8
   m_damage: 2
   m_speed: 2
   m_mutekitime: 3
@@ -149,8 +112,12 @@ MonoBehaviour:
   m_territoryDistance: 5
   m_stopAttackDistance: 2
   m_targetMinion: {fileID: 0}
+  m_moveDirection: {x: 0, y: 0}
+  m_moveDistance: 3
+  m_moveSpeed: 1
   m_renderer: {fileID: 2639703910480705718}
   m_addAlpha: 0.01
+  m_chaseSpeed: 5
   m_attackTime: 1
   m_nowTime: 0
   m_afterAttackTime: 1
@@ -158,6 +125,43 @@ MonoBehaviour:
   m_attackedTime: 0
   m_color: {r: 0, g: 0, b: 0, a: 0}
   m_canAttack: 1
+--- !u!58 &2639703910480705717
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2639703910480705675}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: -0.0540706, y: 0.01298358}
+  serializedVersion: 2
+  m_Radius: 1.6484622
+--- !u!50 &2639703910480705716
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2639703910480705675}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 4
 --- !u!1 &3274452955866020136
 GameObject:
   m_ObjectHideFlags: 0
@@ -169,7 +173,7 @@ GameObject:
   - component: {fileID: 3719965256846906738}
   - component: {fileID: 2911332583305089433}
   - component: {fileID: 1606219555076759578}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: EnemyAttackCollider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -204,9 +208,9 @@ CircleCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0.1}
+  m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.83687353
+  m_Radius: 3
 --- !u!114 &1606219555076759578
 MonoBehaviour:
   m_ObjectHideFlags: 0

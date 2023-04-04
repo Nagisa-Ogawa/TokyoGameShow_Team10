@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 2639703910480705712}
   - component: {fileID: 8078862708849176497}
   m_Layer: 6
-  m_Name: Enemy_B
+  m_Name: Boss_B
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 2639703910480705675}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -8.27, y: 4.44, z: 0}
-  m_LocalScale: {x: 0.3, y: 0.3, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3719965256846906738}
@@ -122,10 +122,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_mode: 0
-  m_type: 1
+  m_type: 2
   m_hpui: {fileID: 0}
   m_rigidbody: {fileID: 2639703910480705716}
-  m_HP: 8
+  m_HP: 10
   m_damage: 1
   m_speed: 2
   m_mutekitime: 3
@@ -134,15 +134,15 @@ MonoBehaviour:
   m_stopAttackDistance: 2
   m_targetMinion: {fileID: 0}
   m_moveDirection: {x: 0, y: 0}
-  m_moveDistance: 3
-  m_moveSpeed: 1
+  m_moveDistance: 0
+  m_moveSpeed: 3
   m_renderer: {fileID: 2639703910480705718}
   m_addAlpha: 0.01
-  m_chaseSpeed: 5
+  m_chaseSpeed: 4
   m_attackTime: 0.5
   m_nowTime: 0
-  m_afterAttackTime: 0.3
-  m_attackCoolDown: 0.3
+  m_afterAttackTime: 0.5
+  m_attackCoolDown: 0.2
   m_attackedTime: 0
   m_color: {r: 0, g: 0, b: 0, a: 0}
   m_canAttack: 1
@@ -210,7 +210,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 3.5
+  m_Radius: 2.5
 --- !u!114 &1606219555076759578
 MonoBehaviour:
   m_ObjectHideFlags: 0

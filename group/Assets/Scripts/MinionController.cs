@@ -32,9 +32,9 @@ public class MinionController : MonoBehaviour
         {
             var minion = Instantiate(m_minionA);
             Vector3 pos = new Vector3(Random.Range(-5.0f, 5.0f), Random.Range(-5.0f, 5.0f), 0.0f);
-            float angleZ = Random.Range(0, 360.0f);
+            // float angleZ = Random.Range(0, 360.0f);
             minion.transform.position = pos;
-            minion.transform.eulerAngles = new Vector3(0.0f, 0.0f, angleZ);
+            // minion.transform.eulerAngles = new Vector3(0.0f, 0.0f, angleZ);
             m_minions.Add(minion.GetComponent<MinionA>());
             // uiçÏê¨
             var hpui = Instantiate(m_hpui, m_canvas.transform);
@@ -61,14 +61,17 @@ public class MinionController : MonoBehaviour
             m_Minions.Add(minion);
             minion.transform.position = enemy.transform.position;
             minion.m_mode = m_mode;
-            minion.m_targetEnemy = m_enemyController.m_targetEnemy;
-            minion.m_target = m_enemyController.m_targetEnemy.gameObject;
+            if (m_enemyController.m_targetEnemy != null)
+            {
+                minion.m_targetEnemy = m_enemyController.m_targetEnemy;
+                minion.m_target = m_enemyController.m_targetEnemy.gameObject;
+            }
             // uiçÏê¨
             var hpui = Instantiate(m_hpui, m_canvas.transform);
             minion.m_hpui = hpui;
             hpui.GetComponent<MinionHPUI>().m_minion = minion;
         }
-        else
+        else if(enemy.m_type==Enemy.ENEMY_TYPE.ENEMY_B)
         {
             // É~ÉjÉIÉìÇ…Ç∑ÇÈ
             var minionObj = Instantiate(m_minionB);
@@ -76,8 +79,11 @@ public class MinionController : MonoBehaviour
             m_Minions.Add(minion);
             minion.transform.position = enemy.transform.position;
             minion.m_mode = m_mode;
-            minion.m_targetEnemy = m_enemyController.m_targetEnemy;
-            minion.m_target = m_enemyController.m_targetEnemy.gameObject;
+            if(m_enemyController.m_targetEnemy != null)
+            {
+                minion.m_targetEnemy = m_enemyController.m_targetEnemy;
+                minion.m_target = m_enemyController.m_targetEnemy.gameObject;
+            }
             // uiçÏê¨
             var hpui = Instantiate(m_hpui, m_canvas.transform);
             minion.m_hpui = hpui;
@@ -104,7 +110,14 @@ public class MinionController : MonoBehaviour
         if (mode==Minion.MINION_MODE.MOVE_ENEMY)
         {
             m_enemyController.FindTargetEnemy();
-            ChangeTarget(m_enemyController.m_targetEnemy.gameObject);
+            if (m_enemyController.m_targetEnemy != null)
+            {
+                ChangeTarget(m_enemyController.m_targetEnemy.gameObject);
+            }
+            else
+            {
+                ChangeMode(Minion.MINION_MODE.FOLLOW);
+            }
         }
     }
 
@@ -143,12 +156,21 @@ public class MinionController : MonoBehaviour
     {
         foreach (Minion minion in m_Minions)
         {
-            if (minion.m_mode != Minion.MINION_MODE.DEAD) continue;
-            minion.m_mode = m_mode;
-            minion.transform.position = pos;
-            minion.m_HP = minion.m_maxHP;
-            minion.gameObject.SetActive(true);
-            minion.m_hpui.SetActive(true);
+            if (minion.m_mode != Minion.MINION_MODE.DEAD)
+            {
+                if (minion.m_HP != minion.m_maxHP)
+                {
+                    minion.m_HP = minion.m_maxHP;
+                }
+            }
+            else
+            {
+                minion.m_mode = m_mode;
+                minion.transform.position = pos;
+                minion.m_HP = minion.m_maxHP;
+                minion.gameObject.SetActive(true);
+                minion.m_hpui.SetActive(true);
+            }
         }
     }
 }

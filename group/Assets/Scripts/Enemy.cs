@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using static UnityEngine.GraphicsBuffer;
 
 public class Enemy : MonoBehaviour {
@@ -17,6 +18,7 @@ public class Enemy : MonoBehaviour {
     {
         ENEMY_A,
         ENEMY_B,
+        BOSS_B,
     }
     public ENEMY_MODE m_mode;
     public ENEMY_TYPE m_type;
@@ -43,11 +45,21 @@ public class Enemy : MonoBehaviour {
     private Vector2 m_vec = Vector2.zero;
     private bool m_isArrive = false;
 
+    // 移動関係
+    [SerializeField]
+    private Vector2 m_moveDirection = Vector2.zero;
+    [SerializeField]
+    private float m_moveDistance = 3.0f;
+    [SerializeField]
+    private float m_moveSpeed = 3.0f;
+
     // 攻撃関係
     [SerializeField]
     private Renderer m_renderer = null;
     [SerializeField]
     private float m_addAlpha = 0.02f;
+    [SerializeField]
+    private float m_chaseSpeed = 4.0f;
     public float m_attackTime = 2.0f;
     public float m_nowTime = 0.0f;
     public float m_afterAttackTime = 1.0f;
@@ -79,6 +91,13 @@ public class Enemy : MonoBehaviour {
                 // テリトリーの外へ出たらテリトリーへ戻る
                 if (CheckTerritory())
                 {
+                    // 移動方向を設定
+                    if (CheckFolding())
+                    {
+                        transform.position = m_territoryPos + (Vector3)(m_moveDirection.normalized * m_moveDistance);
+                        m_moveDirection.x *= -1.0f;
+                        m_moveDirection.y *= -1.0f;
+                    }
                     // 敵がテリトリーに侵入したら迎撃開始
                     if (FindTarget())
                     {
@@ -96,7 +115,7 @@ public class Enemy : MonoBehaviour {
                     ResetEnemy();
                 }
                 // テリトリーの外へ出たらテリトリーへ戻る
-                if (CheckTerritory())
+                if (CheckTerritory()||m_targetMinion.m_mode!=Minion.MINION_MODE.ESCAPE)
                 {
                     // ターゲットの方へ
                     UpdateMoveToTarget();
@@ -147,7 +166,6 @@ public class Enemy : MonoBehaviour {
                     {
                         transform.position = m_territoryPos;
                         m_mode = ENEMY_MODE.WAIT;
-                        m_rigidbody.angularVelocity = 0.0f;
                         m_rigidbody.velocity = Vector2.zero;
                     }
                     UpdateMoveToTerritory();
@@ -165,6 +183,9 @@ public class Enemy : MonoBehaviour {
         switch (m_mode)
         {
             case ENEMY_MODE.WAIT:
+                //var rot = Quaternion.FromToRotation(Vector3.up, m_moveDirection);
+                //transform.rotation = rot;
+                m_rigidbody.MovePosition(transform.position + (Vector3)m_moveDirection.normalized * Time.deltaTime);
                 break;
             case ENEMY_MODE.MOVE_ATTACK:
                 UpdateMove();
@@ -197,7 +218,6 @@ public class Enemy : MonoBehaviour {
         Vector3 dir = m_velocity.normalized;
         if (m_mode == ENEMY_MODE.MOVE_TERRITORY)
         {
-            Debug.Log("長さは" + (transform.position - m_territoryPos).magnitude + "速さは" + m_speed);
             if ((transform.position - m_territoryPos).magnitude <= m_speed)
             {
                 m_velocity = (transform.position - m_territoryPos).magnitude * dir;
@@ -209,11 +229,11 @@ public class Enemy : MonoBehaviour {
         }
         else
         {
-            m_velocity = m_speed * dir;
+            m_velocity = m_chaseSpeed * dir;
         }
-        var rot = Quaternion.FromToRotation(Vector3.up, m_velocity);
-        transform.rotation = rot;
-        m_rigidbody.velocity = m_velocity;
+        //var rot = Quaternion.FromToRotation(Vector3.up, m_velocity);
+        //transform.rotation = rot;
+        m_rigidbody.MovePosition(transform.position+(Vector3)m_velocity*Time.deltaTime);
         m_vec = Vector2.zero;
     }
 
@@ -269,15 +289,24 @@ public class Enemy : MonoBehaviour {
         return false;
     }
 
+    public bool CheckFolding()
+    {
+        if ((m_territoryPos - transform.position).magnitude > m_moveDistance)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     public void ResetEnemy()
     {
-        Debug.Log("やめます");
         // 攻撃を中止する
-        m_mode = ENEMY_MODE.WAIT;
+        m_mode = ENEMY_MODE.MOVE_TERRITORY;
         StopAllCoroutines();
         m_nowTime = 0.0f;
-        m_rigidbody.bodyType = RigidbodyType2D.Dynamic;
-        m_rigidbody.velocity = Vector2.zero;
         m_renderer.material.color = m_color;
         m_vec = Vector2.zero;
     }
@@ -298,7 +327,7 @@ public class Enemy : MonoBehaviour {
             var color = m_renderer.material.color;
             color.a = 1.0f - ratio;
             m_renderer.material.color = color;
-            if (ratio > 1.0f)
+            if (ratio > 0.8f)
             {
                 color.a = 1.0f;
                 m_renderer.material.color = color;
@@ -313,15 +342,14 @@ public class Enemy : MonoBehaviour {
 
     IEnumerator EnemyAttack()
     {
-        var color = m_renderer.material.color;
-        color = Color.black;
-        m_renderer.material.color = color;
+        //var color = m_renderer.material.color;
+        //color = Color.black;
+        //m_renderer.material.color = color;
         // 敵のHPを減らす
         m_targetMinion.Damage(m_damage);
         yield return new WaitForSeconds(m_afterAttackTime);
-        m_mode = ENEMY_MODE.WAIT;
+        m_mode = ENEMY_MODE.MOVE_TERRITORY;
         m_renderer.material.color = m_color;
-        m_rigidbody.bodyType = RigidbodyType2D.Dynamic;
         m_attackedTime = Time.time;
         m_targetMinion = null;
         yield break;
@@ -363,6 +391,10 @@ public class Enemy : MonoBehaviour {
         }
         else
         {
+            if (m_type == ENEMY_TYPE.BOSS_B)
+            {
+                m_enemyController.StartCoroutine(m_enemyController.ChangeScene());
+            }
             gameObject.SetActive(false);
             m_hpui.SetActive(false);
             // ターゲットを変更
@@ -376,6 +408,7 @@ public class Enemy : MonoBehaviour {
     {
         StopAllCoroutines();
     }
+
 
 
 }

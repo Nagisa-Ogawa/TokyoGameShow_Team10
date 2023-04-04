@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class EnemyController : MonoBehaviour
 {
@@ -21,6 +22,9 @@ public class EnemyController : MonoBehaviour
     [SerializeField]
     private int m_getMinionCount = 1;
     private int m_nowEnemyCount = 0;
+    [SerializeField]
+    private float m_attackDistance = 5.0f;
+
 
     // Start is called before the first frame update
     void Start()
@@ -48,11 +52,12 @@ public class EnemyController : MonoBehaviour
     public void FindTargetEnemy()
     {
         Enemy target = null;
-        float minDistance = 99999.0f;
+        m_targetEnemy = null;
+        float minDistance = m_attackDistance;
         foreach(Enemy enemy in m_enemyList)
         {
             if (enemy.m_mode == Enemy.ENEMY_MODE.DEAD) continue;
-            if (minDistance > (m_player.transform.position - enemy.transform.position).magnitude)
+            if (minDistance >= (m_player.transform.position - enemy.transform.position).magnitude)
             {
                 target = enemy;
                 minDistance = (m_player.transform.position - enemy.transform.position).magnitude;
@@ -78,5 +83,11 @@ public class EnemyController : MonoBehaviour
     void Update()
     {
         
+    }
+
+    public IEnumerator ChangeScene()
+    {
+        yield return new WaitForSeconds(3.0f);
+        SceneManager.LoadScene("Result");
     }
 }
