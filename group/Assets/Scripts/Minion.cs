@@ -9,10 +9,10 @@ public class Minion:MonoBehaviour
     public enum MINION_MODE
     {
         FOLLOW,
+        WAIT,
         MOVE_ENEMY,
         ATTACK,
         ESCAPE,
-        WAIT,
         DAMAGE,
         DEAD,
     }
@@ -43,7 +43,18 @@ public class Minion:MonoBehaviour
     [SerializeField]
     private float m_stopAttackBossDistance = 5.0f;
 
-    public Param m_Param = null;
+    // public Param m_Param = null;
+
+    // ミニオンの結合の割合
+    [SerializeField]
+    private float m_bindingWeight = 1.0f;
+    [SerializeField]
+    private float m_separationWeight = 1.0f;
+    [SerializeField]
+    private float m_alignmentWeight = 1.0f;
+    private Vector2 m_vec = Vector2.zero;
+
+
     public Rigidbody2D m_rigidbody { get; set; }
     private MinionController m_minionController = null;
     public MinionController m_MinionController { get { return m_minionController; } protected set { m_minionController = value; } }
@@ -51,7 +62,6 @@ public class Minion:MonoBehaviour
     private List<Minion> m_neighborsList = new List<Minion>();
     public List<Minion> m_NeighborsList { get { return m_neighborsList; } private set { m_neighborsList = value; } }
     public Vector2 m_pos { get; private set; }
-    private Vector2 m_vec = Vector3.zero;
     private Vector2 m_beforPos = Vector2.zero;
     public GameObject m_target { get; set; }
     public Enemy m_targetEnemy { get; set; }
@@ -82,41 +92,41 @@ public class Minion:MonoBehaviour
                 // 近くの仲間を検索
                 // UpdateFindNeighbors();
                 // 近くの仲間の中心へ移動
-                // UpdateBinding();
+                UpdateBinding();
                 // 近くの仲間から離れる
-                //UpdateSeparation();
+                UpdateSeparation();
                 // 近くの仲間と速度を合わせる
-                //UpdateAlignment();
+                UpdateAlignment();
                 // 移動
                 // UpdateMove();
 
                 // プレイヤーの方へ移動
-                UpdateMoveToTarget();
-                break;
-            case MINION_MODE.MOVE_ENEMY:
-                UpdateMoveToTarget();
-                break;
-            case MINION_MODE.ATTACK:
-                if (CheckTargetLeave())
-                {
-                    StopAttack();
-                }
-                break;
-            case MINION_MODE.ESCAPE:
-                if (m_targetEnemy == null) return;
-                if((gameObject.transform.position-m_targetEnemy.transform.position).magnitude >m_escapeDistance)
-                {
-                    m_mode = MINION_MODE.WAIT;
-                    //var rot = Quaternion.FromToRotation(Vector3.up, m_target.transform.position - transform.position);
-                    //transform.rotation = rot;
-                    m_rigidbody.bodyType = RigidbodyType2D.Static;
-                }
-                else
-                {
-                    UpdateEscapeToTarget();
-                }
+                // UpdateMoveToTarget();
                 break;
             case MINION_MODE.WAIT:
+                break;
+            case MINION_MODE.MOVE_ENEMY:
+                //UpdateMoveToTarget();
+                break;
+            case MINION_MODE.ATTACK:
+                //if (CheckTargetLeave())
+                //{
+                //    StopAttack();
+                //}
+                break;
+            case MINION_MODE.ESCAPE:
+                //if (m_targetEnemy == null) return;
+                //if((gameObject.transform.position-m_targetEnemy.transform.position).magnitude >m_escapeDistance)
+                //{
+                //    m_mode = MINION_MODE.WAIT;
+                //    //var rot = Quaternion.FromToRotation(Vector3.up, m_target.transform.position - transform.position);
+                //    //transform.rotation = rot;
+                //    m_rigidbody.bodyType = RigidbodyType2D.Static;
+                //}
+                //else
+                //{
+                //    UpdateEscapeToTarget();
+                //}
                 break;
             case MINION_MODE.DAMAGE:
                 break;
@@ -132,15 +142,15 @@ public class Minion:MonoBehaviour
             case MINION_MODE.FOLLOW:
                 UpdateMove();
                 break;
+            case MINION_MODE.WAIT:
+                break;
             case MINION_MODE.MOVE_ENEMY:
-                UpdateMove();
+                // UpdateMove();
                 break;
             case MINION_MODE.ATTACK:
                 break;
             case MINION_MODE.ESCAPE:
-                UpdateMove();
-                break;
-            case MINION_MODE.WAIT:
+                // UpdateMove();
                 break;
             case MINION_MODE.DAMAGE:
                 break;
@@ -151,80 +161,88 @@ public class Minion:MonoBehaviour
         }
     }
 
-    public void UpdateFindNeighbors()
-    {
-        m_neighborsList.Clear();
+    //public void UpdateFindNeighbors()
+    //{
+    //    m_neighborsList.Clear();
 
-        if (!m_minionController) return;
+    //    if (!m_minionController) return;
 
-        var prodThresh = Mathf.Cos(m_Param.neighborFOV * Mathf.Deg2Rad);
-        var distThresh = m_Param.neighborDistance;
+    //    var prodThresh = Mathf.Cos(m_Param.neighborFOV * Mathf.Deg2Rad);
+    //    var distThresh = m_Param.neighborDistance;
 
-        foreach (var minion in m_minionController.m_Minions)
-        {
-            if (minion == this) continue;
+    //    foreach (var minion in m_minionController.m_Minions)
+    //    {
+    //        if (minion == this) continue;
 
-            var to = minion.m_pos - m_pos;
-            var dist = to.magnitude;
-            // 視界内ならリストへ格納
-            if (dist < distThresh)
-            {
-                var dir = to.normalized;
-                var fwd = m_vec.normalized;
-                var prod = Vector3.Dot(fwd, dir);
-                if (prod > prodThresh)
-                {
-                    m_neighborsList.Add(minion);
-                }
-            }
-        }
-    }
+    //        var to = minion.m_pos - m_pos;
+    //        var dist = to.magnitude;
+    //        // 視界内ならリストへ格納
+    //        if (dist < distThresh)
+    //        {
+    //            var dir = to.normalized;
+    //            var fwd = m_vec.normalized;
+    //            var prod = Vector3.Dot(fwd, dir);
+    //            if (prod > prodThresh)
+    //            {
+    //                m_neighborsList.Add(minion);
+    //            }
+    //        }
+    //    }
+    //}
 
     public void UpdateBinding()
     {
-        if (m_neighborsList.Count == 0) return;
 
-        var averagePos = Vector3.zero;
+        var averagePos = Vector2.zero;
         foreach (var minion in m_minionController.m_Minions)
         {
-            averagePos += minion.transform.position;
+            averagePos += (Vector2)minion.transform.position;
         }
-        averagePos /= (m_minionController.m_Minions.Count + 1);
-        averagePos += m_playerBack.transform.position;
+        averagePos /= m_minionController.m_Minions.Count;
+        averagePos += (Vector2)m_player.transform.position;
         averagePos /= 2;
-        m_vec += new Vector2((averagePos.x - m_pos.x), (averagePos.y - m_pos.y)) * m_Param.bindingWeight;
+        Vector2 toCenterVec=(averagePos-(Vector2)transform.position).normalized;
+        Vector2 direction = (m_rigidbody.velocity * m_bindingWeight +
+                            toCenterVec * (1 - m_bindingWeight)).normalized;
+        m_vec = direction * Random.Range(4, 5);
 
     }
 
     public void UpdateSeparation()
     {
-        if (m_neighborsList.Count == 0) return;
 
         Vector2 vec = Vector2.zero;
-        foreach (var neighbor in m_neighborsList)
+        foreach (var minion_a in m_minionController.m_Minions)
         {
-            vec += (m_pos - neighbor.m_pos).normalized;
+            if (this == minion_a) continue;
+            vec += (Vector2)(transform.position - minion_a.transform.position).normalized;
+            //Vector2 diff = transform.position - minion_a.transform.position;
+            //if (diff.magnitude < Random.Range(0.1f, 0.2f))
+            //{
+            //    m_vec = diff.normalized * m_rigidbody.velocity.magnitude;
+            //}
+            //vec += (m_pos - minion_a.m_pos).normalized;
         }
+        vec /= (m_minionController.m_Minions.Count - 1);
+        m_vec += vec * m_separationWeight;
+
         //vec += (m_pos - m_player.transform.position).normalized;
         //vec /= m_neighborsList.Count+1;
-        vec /= (m_neighborsList.Count + 1);
-
-        m_vec += vec * m_Param.separationWeight;
+        //vec /= (m_neighborsList.Count + 1);
+        //m_vec += vec * m_separationWeight;
 
     }
 
     public void UpdateAlignment()
     {
-        if (m_neighborsList.Count == 0) return;
 
         Vector2 averageVel = Vector2.zero;
-        foreach (var neighbor in m_neighborsList)
+        foreach (var minion in m_MinionController.m_Minions)
         {
-            averageVel += neighbor.m_vec;
+            averageVel += minion.m_rigidbody.velocity;
         }
-        averageVel /= (m_neighborsList.Count + 1);
-        m_vec += (averageVel - m_vec) * m_Param.alignmentWeight;
-        // Debug.Log(averageVel.magnitude);
+        averageVel /= m_minionController.m_Minions.Count;
+        m_vec += (averageVel - m_rigidbody.velocity) * m_alignmentWeight;
     }
 
     public void UpdateMoveToTarget()
@@ -243,15 +261,12 @@ public class Minion:MonoBehaviour
     }
     public void UpdateMove()
     {
-        // float dt = Time.deltaTime;
-        Vector2 m_velocity = Vector2.zero;
-        m_velocity = m_vec;
-        Vector3 dir = m_velocity.normalized;
+        float dt = Time.deltaTime;
+        Vector3 dir = m_vec.normalized;
         // float speed = Random.Range(m_Param.minSpeed, m_Param.maxSpeed);
-        m_velocity = m_speed * dir;
         //var rot = Quaternion.FromToRotation(Vector3.up, m_velocity);
         //transform.rotation = rot;
-        m_rigidbody.velocity = m_velocity;
+        m_rigidbody.velocity = m_vec;
         m_vec = Vector2.zero;
         // m_velocity = Vector2.zero;
     }

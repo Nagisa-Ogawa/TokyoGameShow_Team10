@@ -178,6 +178,7 @@ MonoBehaviour:
   m_escapeDistance: 10
   m_speed: 4
   m_stopAttackDistance: 2
+  m_stopAttackBossDistance: 5
   m_Param: {fileID: 11400000, guid: 0233a49b32b0659458e2e0ebec4bbf45, type: 2}
 --- !u!50 &-6042409668119381846
 Rigidbody2D:
@@ -210,7 +211,7 @@ CircleCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}

@@ -167,7 +167,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2639703910480705675, guid: ac2378c542593614db42a5db7c161a32, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2639703910480705712, guid: ac2378c542593614db42a5db7c161a32, type: 3}
       propertyPath: m_moveDirection.y
@@ -6276,7 +6276,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2639703910480705675, guid: cf7e3561a0c2d804f9b28141f523c0da, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2639703910480705712, guid: cf7e3561a0c2d804f9b28141f523c0da, type: 3}
       propertyPath: m_moveSpeed
@@ -76653,7 +76653,7 @@ MonoBehaviour:
   m_minionB: {fileID: 8581922048600788608, guid: 0b5055c8958c9f64c8932dc2ab51d329, type: 3}
   m_canvas: {fileID: 1718988613}
   m_hpui: {fileID: 9092834167924841898, guid: 8b42acb1d52ba9844953a4595c4ff5a1, type: 3}
-  m_minionMax: 6
+  m_minionMax: 5
 --- !u!4 &1204423539
 Transform:
   m_ObjectHideFlags: 0
@@ -76832,7 +76832,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2639703910480705675, guid: cf7e3561a0c2d804f9b28141f523c0da, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2639703910480705712, guid: cf7e3561a0c2d804f9b28141f523c0da, type: 3}
       propertyPath: m_moveDirection.y
@@ -76897,7 +76897,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2639703910480705675, guid: cf7e3561a0c2d804f9b28141f523c0da, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2639703910480705712, guid: cf7e3561a0c2d804f9b28141f523c0da, type: 3}
       propertyPath: m_moveDirection.x
@@ -76963,6 +76963,10 @@ PrefabInstance:
     - target: {fileID: 2639703910480705675, guid: cf7e3561a0c2d804f9b28141f523c0da, type: 3}
       propertyPath: m_Name
       value: Enemy_A (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2639703910480705675, guid: cf7e3561a0c2d804f9b28141f523c0da, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2639703910480705712, guid: cf7e3561a0c2d804f9b28141f523c0da, type: 3}
       propertyPath: m_moveSpeed
@@ -77032,6 +77036,10 @@ PrefabInstance:
     - target: {fileID: 2639703910480705675, guid: ac2378c542593614db42a5db7c161a32, type: 3}
       propertyPath: m_Name
       value: Enemy_B (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2639703910480705675, guid: ac2378c542593614db42a5db7c161a32, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2639703910480705712, guid: ac2378c542593614db42a5db7c161a32, type: 3}
       propertyPath: m_moveDirection.x
@@ -77397,7 +77405,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2639703910480705675, guid: ac2378c542593614db42a5db7c161a32, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2639703910480705712, guid: ac2378c542593614db42a5db7c161a32, type: 3}
       propertyPath: m_moveDirection.x
@@ -77508,7 +77516,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2639703910480705675, guid: ac2378c542593614db42a5db7c161a32, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2639703910480705712, guid: ac2378c542593614db42a5db7c161a32, type: 3}
       propertyPath: m_moveDirection.x
