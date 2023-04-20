@@ -6,6 +6,15 @@ using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
 {
+    public enum PLAYER_STATE
+    {
+        WAIT,
+        MOVE,
+    }
+    [SerializeField] 
+    private PLAYER_STATE m_state;
+    public PLAYER_STATE m_State 
+        { get { return m_state; } private set { m_state = value; } }
     [SerializeField]
     private float m_speed = 2.0f;
     [SerializeField]
@@ -16,13 +25,33 @@ public class Player : MonoBehaviour
     void Start()
     {
         rigidBody=GetComponent<Rigidbody2D>();
+        m_State = PLAYER_STATE.WAIT;
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        switch(m_State)
+        {
+            case PLAYER_STATE.WAIT:
+                break;
+            case PLAYER_STATE.MOVE:
+                if (m_dir == Vector2.zero)
+                {
+                    m_State = PLAYER_STATE.WAIT;
+                }
+                break;
+        }
     }
 
     private void OnMove(InputValue value)
     {
         // MoveAction‚Ì“ü—Í’l‚ðŽæ“¾
         m_dir = value.Get<Vector2>();
-
+        if(m_State==PLAYER_STATE.WAIT)
+        {
+            m_State=PLAYER_STATE.MOVE;
+        }
     }
 
     private void OnFOLLOW()
@@ -39,10 +68,6 @@ public class Player : MonoBehaviour
     private void OnESCAPE()
     {
         m_minionController.ChangeMode(Minion.MINION_MODE.ESCAPE);
-    }
-    // Update is called once per frame
-    void Update()
-    {
     }
 
     private void FixedUpdate()

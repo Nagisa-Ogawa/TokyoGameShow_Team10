@@ -53,12 +53,15 @@ public class Minion:MonoBehaviour
     [SerializeField]
     private float m_alignmentWeight = 1.0f;
     private Vector2 m_vec = Vector2.zero;
+    [SerializeField]
+    private float m_waitDistance = 3.0f;
 
 
     public Rigidbody2D m_rigidbody { get; set; }
     private MinionController m_minionController = null;
     public MinionController m_MinionController { get { return m_minionController; } protected set { m_minionController = value; } }
-    public GameObject m_player { get; private set; }
+    public GameObject m_playerObj { get; private set; }
+    private Player m_player = null;
     private List<Minion> m_neighborsList = new List<Minion>();
     public List<Minion> m_NeighborsList { get { return m_neighborsList; } private set { m_neighborsList = value; } }
     public Vector2 m_pos { get; private set; }
@@ -71,7 +74,8 @@ public class Minion:MonoBehaviour
     private void Awake()
     {
         m_MinionController = GameObject.Find("MinionController").GetComponent<MinionController>();
-        m_player = GameObject.Find("Player");
+        m_playerObj = GameObject.Find("Player");
+        m_player= m_playerObj.GetComponent<Player>();
         m_rigidbody = GetComponent<Rigidbody2D>();
         m_playerBack = GameObject.Find("PlayerBack");
         m_color = m_renderer.material.color;
@@ -102,8 +106,18 @@ public class Minion:MonoBehaviour
 
                 // ÉvÉåÉCÉÑÅ[ÇÃï˚Ç÷à⁄ìÆ
                 // UpdateMoveToTarget();
+                if (m_player.m_State == Player.PLAYER_STATE.WAIT&&
+                        (m_player.transform.position-transform.position).magnitude<=m_waitDistance)
+                {
+                    m_mode = MINION_MODE.WAIT;
+                    m_rigidbody.velocity = Vector2.zero;
+                }
                 break;
             case MINION_MODE.WAIT:
+                if (m_player.m_State == Player.PLAYER_STATE.MOVE)
+                {
+                    m_mode = MINION_MODE.FOLLOW;
+                }
                 break;
             case MINION_MODE.MOVE_ENEMY:
                 //UpdateMoveToTarget();
@@ -199,7 +213,7 @@ public class Minion:MonoBehaviour
             averagePos += (Vector2)minion.transform.position;
         }
         averagePos /= m_minionController.m_Minions.Count;
-        averagePos += (Vector2)m_player.transform.position;
+        averagePos += (Vector2)m_playerObj.transform.position;
         averagePos /= 2;
         Vector2 toCenterVec=(averagePos-(Vector2)transform.position).normalized;
         Vector2 direction = (m_rigidbody.velocity * m_bindingWeight +
@@ -212,10 +226,10 @@ public class Minion:MonoBehaviour
     {
 
         Vector2 vec = Vector2.zero;
-        foreach (var minion_a in m_minionController.m_Minions)
+        foreach (var minion in m_minionController.m_Minions)
         {
-            if (this == minion_a) continue;
-            vec += (Vector2)(transform.position - minion_a.transform.position).normalized;
+            if (this == minion) continue;
+            vec += (Vector2)(transform.position - minion.transform.position).normalized;
             //Vector2 diff = transform.position - minion_a.transform.position;
             //if (diff.magnitude < Random.Range(0.1f, 0.2f))
             //{
