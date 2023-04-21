@@ -117,7 +117,7 @@ MonoBehaviour:
   m_moveSpeed: 1
   m_renderer: {fileID: 2639703910480705718}
   m_addAlpha: 0.01
-  m_chaseSpeed: 5
+  m_chaseSpeed: 3
   m_attackTime: 1
   m_nowTime: 0
   m_afterAttackTime: 1

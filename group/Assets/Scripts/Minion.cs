@@ -94,17 +94,20 @@ public class Minion:MonoBehaviour
                 UpdateMoveToTarget();
                 break;
             case MINION_MODE.MOVE_ENEMY:
+                CheckReturnPlayer();
                 UpdateMoveToTarget();
                 break;
             case MINION_MODE.ATTACK:
                 if (CheckTargetLeave())
                 {
+                    CheckReturnPlayer();
                     StopAttack();
                 }
                 break;
             case MINION_MODE.ESCAPE:
                 if (m_targetEnemy == null) return;
-                if((gameObject.transform.position-m_targetEnemy.transform.position).magnitude >m_escapeDistance)
+                CheckReturnPlayer();
+                if ((gameObject.transform.position-m_targetEnemy.transform.position).magnitude >m_escapeDistance)
                 {
                     m_mode = MINION_MODE.WAIT;
                     //var rot = Quaternion.FromToRotation(Vector3.up, m_target.transform.position - transform.position);
@@ -117,6 +120,7 @@ public class Minion:MonoBehaviour
                 }
                 break;
             case MINION_MODE.WAIT:
+                CheckReturnPlayer();
                 break;
             case MINION_MODE.DAMAGE:
                 break;
@@ -279,6 +283,15 @@ public class Minion:MonoBehaviour
         return false;
     }
 
+    public void CheckReturnPlayer()
+    {
+        Vector3 pPos = m_player.transform.position;
+        var player = m_player.GetComponent<Player>();
+        if ((pPos - transform.position).magnitude >= player.m_ReturnDistance)
+        {
+            m_minionController.ChangeMode(MINION_MODE.FOLLOW);
+        }
+    }
     public void StartAttack()
     {
         m_canAttack = false;
@@ -292,7 +305,6 @@ public class Minion:MonoBehaviour
         {
             m_nowTime += Time.deltaTime;
             float ratio = m_nowTime / m_attackTime;
-            Debug.Log(ratio);
             var color = m_renderer.material.color;
             color.a = 1.0f - ratio;
             m_renderer.material.color = color;

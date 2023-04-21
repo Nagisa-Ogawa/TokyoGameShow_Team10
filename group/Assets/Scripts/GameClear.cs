@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
-public class GameOver : MonoBehaviour
+public class GameClear : MonoBehaviour
 {
     // Start is called before the first frame update
     void Start()
@@ -15,12 +15,10 @@ public class GameOver : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
     }
 
     private void OnDECISION()
     {
         SceneManager.LoadScene("Stage1");
     }
-
 }

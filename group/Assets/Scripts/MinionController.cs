@@ -90,6 +90,7 @@ public class MinionController : MonoBehaviour
             minion.m_hpui = hpui;
             hpui.GetComponent<MinionHPUI>().m_minion = minion;
         }
+        ChangeMode(Minion.MINION_MODE.MOVE_ENEMY);
     }
 
     public void ChangeMode(Minion.MINION_MODE mode)

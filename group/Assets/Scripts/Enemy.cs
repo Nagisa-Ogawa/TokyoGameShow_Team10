@@ -226,7 +226,6 @@ public class Enemy : MonoBehaviour {
             {
                 m_velocity = m_speed * dir;
             }
-            Debug.Log(m_velocity);
         }
         else
         {
@@ -307,6 +306,7 @@ public class Enemy : MonoBehaviour {
     {
         // çUåÇÇíÜé~Ç∑ÇÈ
         m_mode = ENEMY_MODE.MOVE_TERRITORY;
+        m_rigidbody.bodyType = RigidbodyType2D.Dynamic;
         StopAllCoroutines();
         m_nowTime = 0.0f;
         m_renderer.material.color = m_color;

@@ -14,6 +14,10 @@ public class Player : MonoBehaviour
     private MinionController m_minionController = null;
     private Vector2 m_dir = Vector2.zero;
     Rigidbody2D rigidBody;
+    [SerializeField]
+    private float m_returnDistance = 10.0f;
+    public float m_ReturnDistance
+    { get { return m_returnDistance; }private set { m_returnDistance = value; } }
     // Start is called before the first frame update
     void Start()
     {
