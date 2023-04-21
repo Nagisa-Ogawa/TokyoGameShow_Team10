@@ -2,6 +2,7 @@ using Microsoft.Win32.SafeHandles;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class MinionController : MonoBehaviour
 {
@@ -172,5 +173,18 @@ public class MinionController : MonoBehaviour
                 minion.m_hpui.SetActive(true);
             }
         }
+    }
+
+    public IEnumerator CheckAllDied()
+    {
+        foreach(var minion in m_Minions)
+        {
+            if (minion.m_mode != Minion.MINION_MODE.DEAD)
+            {
+                yield break;
+            }
+        }
+        yield return new WaitForSeconds(2.0f);
+        SceneManager.LoadScene("GameOver");
     }
 }

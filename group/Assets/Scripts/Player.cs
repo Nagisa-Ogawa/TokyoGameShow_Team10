@@ -8,6 +8,9 @@ public class Player : MonoBehaviour
     [SerializeField]
     private float m_speed = 2.0f;
     [SerializeField]
+    private int m_hp = 5;
+    public int m_HP { get { return m_hp; } private set { m_hp = value; } }
+    [SerializeField]
     private MinionController m_minionController = null;
     private Vector2 m_dir = Vector2.zero;
     Rigidbody2D rigidBody;

@@ -48,7 +48,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 2.8
+  m_Radius: 10
 --- !u!114 &3380113475738247813
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -178,6 +178,7 @@ MonoBehaviour:
   m_escapeDistance: 10
   m_speed: 4
   m_stopAttackDistance: 2
+  m_stopAttackBossDistance: 5
   m_Param: {fileID: 11400000, guid: 0233a49b32b0659458e2e0ebec4bbf45, type: 2}
 --- !u!50 &-6042409668119381846
 Rigidbody2D:

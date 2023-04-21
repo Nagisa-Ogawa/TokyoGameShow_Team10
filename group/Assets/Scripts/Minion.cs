@@ -343,6 +343,8 @@ public class Minion:MonoBehaviour
             m_target = null;
             m_targetEnemy = null;
             m_nowTime = 0.0f;
+            // ‘S–Å‚©‚Ç‚¤‚©”»’è
+            m_minionController.StartCoroutine(m_minionController.CheckAllDied());
         }
     }
 
