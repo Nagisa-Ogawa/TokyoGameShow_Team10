@@ -228,14 +228,13 @@ public class Minion:MonoBehaviour
         Vector2 vec = Vector2.zero;
         foreach (var minion in m_minionController.m_Minions)
         {
-            if (this == minion) continue;
-            vec += (Vector2)(transform.position - minion.transform.position).normalized;
-            //Vector2 diff = transform.position - minion_a.transform.position;
-            //if (diff.magnitude < Random.Range(0.1f, 0.2f))
-            //{
-            //    m_vec = diff.normalized * m_rigidbody.velocity.magnitude;
-            //}
-            //vec += (m_pos - minion_a.m_pos).normalized;
+            //if (this == minion) continue;
+            //vec += (Vector2)(transform.position - minion.transform.position).normalized;
+            Vector2 diff = transform.position - minion.transform.position;
+            if (diff.magnitude < Random.Range(0.5f, 1.0f))
+            {
+                m_vec += diff.normalized;
+            }
         }
         vec /= (m_minionController.m_Minions.Count - 1);
         m_vec += vec * m_separationWeight;
