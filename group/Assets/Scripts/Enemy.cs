@@ -185,7 +185,7 @@ public class Enemy : MonoBehaviour {
             case ENEMY_MODE.WAIT:
                 //var rot = Quaternion.FromToRotation(Vector3.up, m_moveDirection);
                 //transform.rotation = rot;
-                m_rigidbody.MovePosition(transform.position + (Vector3)m_moveDirection.normalized * Time.deltaTime);
+                m_rigidbody.velocity = m_moveDirection;
                 break;
             case ENEMY_MODE.MOVE_ATTACK:
                 UpdateMove();
@@ -226,6 +226,7 @@ public class Enemy : MonoBehaviour {
             {
                 m_velocity = m_speed * dir;
             }
+            Debug.Log(m_velocity);
         }
         else
         {
@@ -233,7 +234,8 @@ public class Enemy : MonoBehaviour {
         }
         //var rot = Quaternion.FromToRotation(Vector3.up, m_velocity);
         //transform.rotation = rot;
-        m_rigidbody.MovePosition(transform.position+(Vector3)m_velocity*Time.deltaTime);
+        m_rigidbody.velocity = m_velocity;
+        // m_rigidbody.MovePosition(transform.position+(Vector3)m_velocity*Time.deltaTime);
         m_vec = Vector2.zero;
     }
 
@@ -349,6 +351,7 @@ public class Enemy : MonoBehaviour {
         m_targetMinion.Damage(m_damage);
         yield return new WaitForSeconds(m_afterAttackTime);
         m_mode = ENEMY_MODE.MOVE_TERRITORY;
+        m_rigidbody.bodyType = RigidbodyType2D.Dynamic;
         m_renderer.material.color = m_color;
         m_attackedTime = Time.time;
         m_targetMinion = null;

@@ -25,6 +25,7 @@ public class EnemyAttackCollider : MonoBehaviour
             // çUåÇÇ÷
             //Debug.Log("kentisita");
             m_enemy.m_targetMinion = collision.gameObject.GetComponent<Minion>();
+            m_enemy.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Static;
             m_enemy.m_mode = Enemy.ENEMY_MODE.SETUP_ATTACK;
         }
     }
