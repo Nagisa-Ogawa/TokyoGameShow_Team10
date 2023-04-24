@@ -5,17 +5,20 @@ using UnityEngine.SceneManagement;
 using static UnityEngine.GraphicsBuffer;
 
 public class Enemy : MonoBehaviour {
-    public enum ENEMY_MODE
-    {
+    public enum ENEMY_MODE {
         WAIT,
         MOVE_ATTACK,
+        WAIT_ATTACK_COOLDWON,
+        WAIT_RANGE_ATTACK_COOLDWON,
         SETUP_ATTACK,
+        SETUP_RANGE_ATTACK,
         ATTACK,
+        RANGE_ATTACK,
+        AFTER_ATTACK,
         MOVE_TERRITORY,
         DEAD,
     }
-    public enum ENEMY_TYPE
-    {
+    public enum ENEMY_TYPE {
         ENEMY_A,
         ENEMY_B,
         BOSS_B,
@@ -24,7 +27,7 @@ public class Enemy : MonoBehaviour {
     public ENEMY_TYPE m_type;
     public GameObject m_hpui;
     private MinionController m_minionController = null;
-    private EnemyController m_enemyController= null;
+    private EnemyController m_enemyController = null;
     [SerializeField]
     private Rigidbody2D m_rigidbody = null;
     public int m_HP = 3;
@@ -55,6 +58,8 @@ public class Enemy : MonoBehaviour {
 
     // 攻撃関係
     [SerializeField]
+    private EnemyAttackCollider m_enemyAttack = null;
+    [SerializeField]
     private Renderer m_renderer = null;
     [SerializeField]
     private float m_addAlpha = 0.02f;
@@ -68,6 +73,26 @@ public class Enemy : MonoBehaviour {
     public Color m_color;
     public bool m_canAttack = true;
 
+    // 範囲攻撃関係
+    [SerializeField]
+    private EnemyRangeAttack m_rangeAttack = null;
+    [SerializeField]
+    private float m_addAlphaRange = 0.02f;
+    [SerializeField]
+    private float m_attackTimeRange = 2.0f;
+    [SerializeField]
+    private int m_rangeAttackDamage = 5;
+    [SerializeField]
+    private float m_rangeAttackCoolDown=3.0f;
+    [SerializeField]
+    private float m_rangeAttackTime = 2.0f;
+    [SerializeField]
+    private float m_rangeAfterAttackTime = 1.0f;
+    private Color m_rangeColor;
+    [SerializeField]
+    private Renderer m_rangeRenderere = null;
+
+
 
     private void Awake()
     {
@@ -78,8 +103,12 @@ public class Enemy : MonoBehaviour {
     void Start()
     {
         m_mode = ENEMY_MODE.WAIT;
+        m_rangeColor = m_rangeRenderere.material.color;
+        Color color = m_rangeRenderere.material.color;
+        color.a = 0.0f;
+        m_rangeRenderere.material.color= color;
+
         m_territoryPos = gameObject.transform.position;
-        m_color=m_renderer.material.color;
     }
 
     // Update is called once per frame
@@ -117,15 +146,29 @@ public class Enemy : MonoBehaviour {
                 // テリトリーの外へ出たらテリトリーへ戻る
                 if (CheckTerritory()||m_targetMinion.m_mode!=Minion.MINION_MODE.ESCAPE)
                 {
-                    // ターゲットの方へ
-                    UpdateMoveToTarget();
+                    // 攻撃検知エリア内にミニオンがいるなら
+                    if (m_enemyAttack.m_HitMinionList.Count > 0)
+                    {
+                        // できたら自分から一番近いやつを選ぶ
+                        // m_enemy.m_targetMinion = collision.gameObject.GetComponent<Minion>();
+                        m_targetMinion = m_enemyAttack.m_HitMinionList[0];
+
+                        m_rigidbody.bodyType = RigidbodyType2D.Static;
+                        // m_mode = ENEMY_MODE.WAIT_ATTACK_COOLDWON;
+                        m_mode = ENEMY_MODE.WAIT_RANGE_ATTACK_COOLDWON;
+                    }
+                    else
+                    {
+                        // ターゲットの方へ
+                        UpdateMoveToTarget();
+                    }
                 }
                 else
                 {
                     m_mode = ENEMY_MODE.MOVE_TERRITORY;
                 }
                 break;
-            case ENEMY_MODE.SETUP_ATTACK:
+            case ENEMY_MODE.WAIT_ATTACK_COOLDWON:
                 if (m_targetMinion == null)
                 {
                     ResetEnemy();
@@ -135,7 +178,7 @@ public class Enemy : MonoBehaviour {
                     // 攻撃可能なら攻撃へ
                     if (CheckCanAttack())
                     {
-                        m_mode = ENEMY_MODE.ATTACK;
+                        m_mode = ENEMY_MODE.SETUP_ATTACK;
                         StartAttack();
                     }
                 }
@@ -143,6 +186,22 @@ public class Enemy : MonoBehaviour {
                 {
                     ResetEnemy();
                 }
+                break;
+            case ENEMY_MODE.WAIT_RANGE_ATTACK_COOLDWON:
+                // 攻撃可能なら攻撃へ
+                if (CheckCanAttack())
+                {
+                    m_mode = ENEMY_MODE.SETUP_RANGE_ATTACK;
+                    StartRangeAttack();
+                }
+                break;
+            case ENEMY_MODE.SETUP_ATTACK:
+                if (m_targetMinion == null)
+                {
+                    ResetEnemy();
+                }
+                break;
+            case ENEMY_MODE.SETUP_RANGE_ATTACK:
                 break;
             case ENEMY_MODE.ATTACK:
                 if (m_targetMinion == null)
@@ -153,6 +212,9 @@ public class Enemy : MonoBehaviour {
                 {
                     ResetEnemy();
                 }
+                break;
+            case ENEMY_MODE.RANGE_ATTACK:
+
                 break;
             case ENEMY_MODE.MOVE_TERRITORY:
                 // テリトリーに侵入したら迎撃開始
@@ -305,7 +367,7 @@ public class Enemy : MonoBehaviour {
     public void ResetEnemy()
     {
         // 攻撃を中止する
-        m_mode = ENEMY_MODE.MOVE_TERRITORY;
+        m_mode = ENEMY_MODE.WAIT;
         m_rigidbody.bodyType = RigidbodyType2D.Dynamic;
         StopAllCoroutines();
         m_nowTime = 0.0f;
@@ -316,7 +378,17 @@ public class Enemy : MonoBehaviour {
     public void StartAttack()
     {
         m_canAttack = false;
+        m_color = m_renderer.material.color;
         StartCoroutine(ChargeEnemyAttack());
+    }
+
+    public void StartRangeAttack()
+    {
+        m_canAttack = false;
+        m_rangeRenderere.material.color = m_rangeColor;
+        // 範囲攻撃用オブジェクトを敵の方向へ調整
+        m_rangeAttack.SetRange(m_targetMinion);
+        StartCoroutine(ChargeEnemyRangeAttack());
     }
 
     private IEnumerator ChargeEnemyAttack()
@@ -342,20 +414,71 @@ public class Enemy : MonoBehaviour {
         }
     }
 
+    private IEnumerator ChargeEnemyRangeAttack()
+    {
+        // 色をだんだん薄くする
+        while (true)
+        {
+            m_nowTime += Time.deltaTime;
+            float ratio = m_nowTime / m_rangeAttackTime;
+            var color = m_rangeColor;
+            color.a = 1.0f - ratio;
+            m_rangeRenderere.material.color = color;
+            if (ratio > 0.8f)
+            {
+                color.a = 1.0f;
+                m_rangeRenderere.material.color = Color.red;
+                m_nowTime = 0.0f;
+                // 攻撃コルーチンへ
+                StartCoroutine(EnemyRangeAttack());
+                yield break;
+            }
+            yield return null;
+        }
+    }
+
     IEnumerator EnemyAttack()
     {
         //var color = m_renderer.material.color;
         //color = Color.black;
         //m_renderer.material.color = color;
         // 敵のHPを減らす
-        m_targetMinion.Damage(m_damage);
+        m_targetMinion.Damage(m_damage,this);
         yield return new WaitForSeconds(m_afterAttackTime);
-        m_mode = ENEMY_MODE.MOVE_TERRITORY;
+        m_mode = ENEMY_MODE.WAIT;
         m_rigidbody.bodyType = RigidbodyType2D.Dynamic;
         m_renderer.material.color = m_color;
         m_attackedTime = Time.time;
         m_targetMinion = null;
         yield break;
+    }
+
+    IEnumerator EnemyRangeAttack()
+    {
+        Debug.Log(m_rangeAttack.m_HitMinionList.Count + "人に攻撃");
+        foreach(var minion in m_rangeAttack.m_HitMinionList)
+        {
+            minion.Damage(m_rangeAttackDamage,this);
+        }
+        yield return new WaitForSeconds(m_afterAttackTime);
+        m_mode = ENEMY_MODE.WAIT;
+        m_rigidbody.bodyType = RigidbodyType2D.Dynamic;
+        Color color = m_rangeRenderere.material.color;
+        color.a = 0.0f;
+        m_rangeRenderere.material.color = color;
+        m_rangeAttack.transform.eulerAngles = Vector3.zero;
+        m_rangeAttack.transform.localPosition = Vector3.zero;
+        m_attackedTime = Time.time;
+        m_targetMinion = null;
+        yield break;
+    }
+
+    public void DeleteMinionAttackList(Minion minion)
+    {
+        if (m_enemyAttack.m_HitMinionList.Contains(minion))
+        {
+            m_enemyAttack.m_HitMinionList.Remove(minion);
+        }
     }
 
     public bool CheckCanAttack()
@@ -377,6 +500,27 @@ public class Enemy : MonoBehaviour {
             }
         }
     }
+
+    public bool CheckCanRangeAttack()
+    {
+        if (m_canAttack)
+        {
+            return true;
+        }
+        else
+        {
+            if (Time.time - m_attackedTime >= m_rangeAttackCoolDown)
+            {
+                m_canAttack = true;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }
+
 
     public void StopEnemyCoroutine()
     {

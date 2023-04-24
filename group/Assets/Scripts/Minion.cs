@@ -336,7 +336,7 @@ public class Minion:MonoBehaviour
         yield break;
     }
 
-    public void Damage(int damage)
+    public void Damage(int damage,Enemy enemy)
     {
         m_HP-=damage;
         if (m_HP > 0)
@@ -347,6 +347,8 @@ public class Minion:MonoBehaviour
         {
             gameObject.SetActive(false);
             m_hpui.SetActive(false);
+            // 敵の攻撃範囲内で死亡したなら敵の攻撃可能リストから自分を消去
+            enemy.DeleteMinionAttackList(this);
             // ターゲットを変更
             m_mode = MINION_MODE.DEAD;
             m_renderer.material.color = m_color;
