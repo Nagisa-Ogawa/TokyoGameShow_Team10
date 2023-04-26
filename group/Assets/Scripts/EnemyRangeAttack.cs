@@ -6,8 +6,8 @@ public class EnemyRangeAttack : MonoBehaviour
 {
     [SerializeField]
     private Enemy m_enemy = null;
-    private List<Minion> m_hitMinionList = new List<Minion>();
-    public List<Minion> m_HitMinionList { get { return m_hitMinionList; } private set { m_hitMinionList = value; } }
+    private List<GameObject> m_hitObjList = new List<GameObject>();
+    public List<GameObject> m_HitObjList { get { return m_hitObjList; } set { m_hitObjList = value; } }
     [SerializeField]
     private float m_rangeDistance = 3.0f;
     // Start is called before the first frame update
@@ -21,30 +21,30 @@ public class EnemyRangeAttack : MonoBehaviour
     {
     }
 
-    public void SetRange(Minion minion)
+    public void SetRange(GameObject target)
     {
-        transform.position += (minion.transform.position - transform.position).normalized * m_rangeDistance;
-        var rot = Quaternion.FromToRotation(Vector3.up,(minion.transform.position-transform.position) );
+        transform.position += (target.transform.position - transform.position).normalized * m_rangeDistance;
+        var rot = Quaternion.FromToRotation(Vector3.up,(target.transform.position-transform.position) );
         transform.rotation = rot;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.tag == "Minion" && 
-                m_hitMinionList.Contains(collision.GetComponent<Minion>()) == false)
+        if ((collision.tag == "Minion" || collision.tag == "Player") &&
+                m_hitObjList.Contains(collision.GetComponent<GameObject>()) == false)
         {
-            m_hitMinionList.Add(collision.GetComponent<Minion>());
-            Debug.Log("入った　：　" + m_HitMinionList.Count);
+            m_hitObjList.Add(collision.gameObject);
+            Debug.Log("入った　：　" + m_HitObjList.Count);
         }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.tag == "Minion" &&
-                m_hitMinionList.Contains(collision.GetComponent<Minion>()) == true)
+        if ((collision.tag == "Minion" || collision.tag == "Player") &&
+                m_hitObjList.Contains(collision.GetComponent<GameObject>()) == true)
         {
-            m_hitMinionList.Remove(collision.GetComponent<Minion>());
-            Debug.Log("でた　：　" + m_HitMinionList.Count);
+            m_hitObjList.Remove(collision.gameObject);
+            Debug.Log("でた　：　" + m_HitObjList.Count);
         }
     }
 }

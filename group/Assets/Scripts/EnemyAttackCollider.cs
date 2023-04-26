@@ -6,8 +6,8 @@ public class EnemyAttackCollider : MonoBehaviour
     [SerializeField]
     private Enemy m_enemy = null;
 
-    private List<Minion> m_hitMinionList = new List<Minion>();
-    public List<Minion> m_HitMinionList { get { return m_hitMinionList; } private set { m_hitMinionList = value; } }
+    private List<GameObject> m_hitObjList = new List<GameObject>();
+    public List<GameObject> m_HitObjList { get { return m_hitObjList; } private set { m_hitObjList = value; } }
 
     // Start is called before the first frame update
     void Start()
@@ -27,20 +27,20 @@ public class EnemyAttackCollider : MonoBehaviour
         //    if (m_enemy.m_mode != Enemy.ENEMY_MODE.MOVE_ATTACK) return;
         //    // çUåÇÇ÷
         //}
-        if (collision.tag == "Minion" &&
-        m_hitMinionList.Contains(collision.GetComponent<Minion>()) == false)
+        if ((collision.tag == "Minion" || collision.tag == "Player" ) &&
+        m_hitObjList.Contains(collision.gameObject) == false)
         {
-            m_hitMinionList.Add(collision.GetComponent<Minion>());
+            m_hitObjList.Add(collision.gameObject);
         }
 
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.tag == "Minion" &&
-                m_hitMinionList.Contains(collision.GetComponent<Minion>()) == true)
+        if ((collision.tag == "Minion" || collision.tag == "Player") &&
+                m_hitObjList.Contains(collision.gameObject) == true)
         {
-            m_hitMinionList.Remove(collision.GetComponent<Minion>());
+            m_hitObjList.Remove(collision.gameObject);
         }
     }
 

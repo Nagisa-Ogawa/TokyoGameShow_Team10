@@ -11,7 +11,8 @@ public class MinionController : MonoBehaviour
     [SerializeField]
     private EnemyController m_enemyController = null;
     [SerializeField]
-    private GameObject m_Player= null;
+    private GameObject m_player= null;
+    public GameObject m_Player {  get { return m_player; } private set { m_player = value; } }
     [SerializeField]
     private GameObject m_playerBack = null;
     public Minion.MINION_MODE m_mode { get; set; }

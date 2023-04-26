@@ -23,6 +23,11 @@ public class Enemy : MonoBehaviour {
         ENEMY_B,
         BOSS_B,
     }
+    public enum TARGET_TYPE
+    {
+        PLAYER,
+        MINION,
+    }
     public ENEMY_MODE m_mode;
     public ENEMY_TYPE m_type;
     public GameObject m_hpui;
@@ -43,10 +48,13 @@ public class Enemy : MonoBehaviour {
     private float m_territoryDistance = 6.0f;
     [SerializeField]
     private float m_stopAttackDistance = 2.0f;
+    public GameObject m_target;
     public Minion m_targetMinion;
+    private TARGET_TYPE m_targetType;
     public Vector3 m_territoryPos { get; set; }
     private Vector2 m_vec = Vector2.zero;
     private bool m_isArrive = false;
+    private Coroutine m_coroutine;
 
     // 移動関係
     [SerializeField]
@@ -60,7 +68,7 @@ public class Enemy : MonoBehaviour {
     [SerializeField]
     private EnemyAttackCollider m_enemyAttack = null;
     [SerializeField]
-    private Renderer m_renderer = null;
+    private SpriteRenderer m_renderer = null;
     [SerializeField]
     private float m_addAlpha = 0.02f;
     [SerializeField]
@@ -90,7 +98,7 @@ public class Enemy : MonoBehaviour {
     private float m_rangeAfterAttackTime = 1.0f;
     private Color m_rangeColor;
     [SerializeField]
-    private Renderer m_rangeRenderere = null;
+    private SpriteRenderer m_rangeRenderere = null;
 
 
 
@@ -114,6 +122,7 @@ public class Enemy : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
+        // Debug.Log(m_mode);
         switch(m_mode)
         {
             case ENEMY_MODE.WAIT:
@@ -139,53 +148,64 @@ public class Enemy : MonoBehaviour {
                 }
                 break;
             case ENEMY_MODE.MOVE_ATTACK:
-                if (m_targetMinion == null)
+                if (m_target == null)
                 {
                     ResetEnemy();
+                    break;
                 }
-                // テリトリーの外へ出たらテリトリーへ戻る
-                if (CheckTerritory()||m_targetMinion.m_mode!=Minion.MINION_MODE.ESCAPE)
+                // 攻撃検知エリア内にミニオンがいるなら
+                if (m_enemyAttack.m_HitObjList.Count > 0)
                 {
-                    // 攻撃検知エリア内にミニオンがいるなら
-                    if (m_enemyAttack.m_HitMinionList.Count > 0)
+                    // できたら自分から一番近いやつを選ぶ
+                    // m_enemy.m_targetMinion = collision.gameObject.GetComponent<Minion>();
+                    if (m_target.tag == "Minion")
                     {
-                        // できたら自分から一番近いやつを選ぶ
-                        // m_enemy.m_targetMinion = collision.gameObject.GetComponent<Minion>();
-                        m_targetMinion = m_enemyAttack.m_HitMinionList[0];
-
-                        m_rigidbody.bodyType = RigidbodyType2D.Static;
-                        // m_mode = ENEMY_MODE.WAIT_ATTACK_COOLDWON;
-                        m_mode = ENEMY_MODE.WAIT_RANGE_ATTACK_COOLDWON;
+                        m_targetType = TARGET_TYPE.MINION;
+                        m_targetMinion = m_target.GetComponent<Minion>();
                     }
                     else
+                    {
+                        m_targetType = TARGET_TYPE.PLAYER;
+                    }
+
+                    m_rigidbody.bodyType = RigidbodyType2D.Kinematic;
+                    m_rigidbody.velocity = Vector3.zero;
+                    // m_mode = ENEMY_MODE.WAIT_ATTACK_COOLDWON;
+                    m_mode = ENEMY_MODE.WAIT_RANGE_ATTACK_COOLDWON;
+                }
+                else
+                {
+                    // テリトリーの外へ出たらテリトリーへ戻る
+                    if (CheckTerritory() || (m_targetType==TARGET_TYPE.MINION&& m_targetMinion.m_mode != Minion.MINION_MODE.ESCAPE))
                     {
                         // ターゲットの方へ
                         UpdateMoveToTarget();
                     }
-                }
-                else
-                {
-                    m_mode = ENEMY_MODE.MOVE_TERRITORY;
+                    else
+                    {
+                        m_mode = ENEMY_MODE.MOVE_TERRITORY;
+                    }
                 }
                 break;
             case ENEMY_MODE.WAIT_ATTACK_COOLDWON:
-                if (m_targetMinion == null)
+                if (m_target == null)
                 {
                     ResetEnemy();
+                    break;
                 }
-                if (!CheckTargetLeave())
+                // 攻撃可能なら攻撃へ
+                if (CheckCanAttack())
                 {
-                    // 攻撃可能なら攻撃へ
-                    if (CheckCanAttack())
-                    {
-                        m_mode = ENEMY_MODE.SETUP_ATTACK;
-                        StartAttack();
-                    }
+                    m_mode = ENEMY_MODE.SETUP_ATTACK;
+                    StartAttack();
                 }
-                else
-                {
-                    ResetEnemy();
-                }
+                //if (!CheckTargetLeave())
+                //{
+                //}
+                //else
+                //{
+                //    ResetEnemy();
+                //}
                 break;
             case ENEMY_MODE.WAIT_RANGE_ATTACK_COOLDWON:
                 // 攻撃可能なら攻撃へ
@@ -196,7 +216,7 @@ public class Enemy : MonoBehaviour {
                 }
                 break;
             case ENEMY_MODE.SETUP_ATTACK:
-                if (m_targetMinion == null)
+                if (m_target == null)
                 {
                     ResetEnemy();
                 }
@@ -204,33 +224,57 @@ public class Enemy : MonoBehaviour {
             case ENEMY_MODE.SETUP_RANGE_ATTACK:
                 break;
             case ENEMY_MODE.ATTACK:
-                if (m_targetMinion == null)
+                if (m_target == null)
                 {
                     ResetEnemy();
                 }
-                if (CheckTargetLeave())
-                {
-                    ResetEnemy();
-                }
+                //if (CheckTargetLeave())
+                //{
+                //    ResetEnemy();
+                //}
                 break;
             case ENEMY_MODE.RANGE_ATTACK:
 
                 break;
             case ENEMY_MODE.MOVE_TERRITORY:
-                // テリトリーに侵入したら迎撃開始
-                if(FindTarget())
+                // 攻撃検知エリア内にミニオンがいるなら
+                if (m_enemyAttack.m_HitObjList.Count > 0)
                 {
-                    m_mode = ENEMY_MODE.MOVE_ATTACK;
+                    // できたら自分から一番近いやつを選ぶ
+                    // m_enemy.m_targetMinion = collision.gameObject.GetComponent<Minion>();
+                    m_target = m_enemyAttack.m_HitObjList[0];
+                    if (m_target.tag == "Minion")
+                    {
+                        m_targetType = TARGET_TYPE.MINION;
+                        m_targetMinion = m_target.GetComponent<Minion>();
+                    }
+                    else
+                    {
+                        m_targetType = TARGET_TYPE.PLAYER;
+                    }
+
+                    m_rigidbody.bodyType = RigidbodyType2D.Kinematic;
+                    m_rigidbody.velocity = Vector3.zero;
+                    m_mode = ENEMY_MODE.WAIT_ATTACK_COOLDWON;
+                    // m_mode = ENEMY_MODE.WAIT_RANGE_ATTACK_COOLDWON;
                 }
                 else
                 {
-                    if ((transform.position - m_territoryPos).magnitude<=0.1f)
+                    // テリトリーに侵入したら迎撃開始
+                    if (FindTarget())
                     {
-                        transform.position = m_territoryPos;
-                        m_mode = ENEMY_MODE.WAIT;
-                        m_rigidbody.velocity = Vector2.zero;
+                        m_mode = ENEMY_MODE.MOVE_ATTACK;
                     }
-                    UpdateMoveToTerritory();
+                    else
+                    {
+                        if ((transform.position - m_territoryPos).magnitude <= 0.1f)
+                        {
+                            transform.position = m_territoryPos;
+                            m_mode = ENEMY_MODE.WAIT;
+                            m_rigidbody.velocity = Vector2.zero;
+                        }
+                        UpdateMoveToTerritory();
+                    }
                 }
                 break;
             case ENEMY_MODE.DEAD:
@@ -264,7 +308,7 @@ public class Enemy : MonoBehaviour {
 
     public void UpdateMoveToTarget()
     {
-        m_vec = m_targetMinion.transform.position - transform.position;
+        m_vec = m_target.transform.position - transform.position;
     }
 
     public void UpdateMoveToTerritory()
@@ -302,7 +346,7 @@ public class Enemy : MonoBehaviour {
 
     public bool FindTarget()
     {
-        Minion target = null;
+        GameObject target = null;
         float minDistance = 99999.0f;
         // すべてのミニオンが射程内にいるかチェック
         foreach(var minon in m_minionController.m_Minions)
@@ -311,18 +355,34 @@ public class Enemy : MonoBehaviour {
             if ((minon.transform.position - m_territoryPos).magnitude <= m_territoryDistance&&
                     (minon.transform.position - gameObject.transform.position).magnitude<minDistance)
             {
-                target = minon;
+                target = minon.gameObject;
                 minDistance = (minon.transform.position - gameObject.transform.position).magnitude;
             }
         }
-        if(target == null)
+        if ((m_minionController.m_Player.transform.position - m_territoryPos).magnitude <= m_territoryDistance &&
+        (m_minionController.m_Player.transform.position - gameObject.transform.position).magnitude < minDistance)
         {
-            m_targetMinion = target;
+            target = m_minionController.m_Player;
+        }
+
+        if (target == null)
+        {
+            m_target = target;
+            m_targetMinion = null;
             return false;
         }
         else
         {
-            m_targetMinion=target;
+            m_target=target;
+            if (m_target.tag == "Minion")
+            {
+                m_targetType=TARGET_TYPE.MINION;
+                m_targetMinion=m_target.GetComponent<Minion>();
+            }
+            else
+            {
+                m_targetType = TARGET_TYPE.PLAYER;
+            }
             return true;
         }
     }
@@ -341,11 +401,11 @@ public class Enemy : MonoBehaviour {
 
     public bool CheckTargetLeave()
     {
-        if(m_targetMinion==null)
+        if(m_target==null)
         {
             return true;
         }
-        if((transform.position-m_targetMinion.transform.position).magnitude>=m_stopAttackDistance)
+        if((transform.position-m_target.transform.position).magnitude>=m_stopAttackDistance)
         {
             return true;
         }
@@ -367,9 +427,12 @@ public class Enemy : MonoBehaviour {
     public void ResetEnemy()
     {
         // 攻撃を中止する
-        m_mode = ENEMY_MODE.WAIT;
+        m_mode = ENEMY_MODE.MOVE_TERRITORY;
         m_rigidbody.bodyType = RigidbodyType2D.Dynamic;
-        StopAllCoroutines();
+        if (m_coroutine != null)
+        {
+            StopCoroutine(m_coroutine);
+        }
         m_nowTime = 0.0f;
         m_renderer.material.color = m_color;
         m_vec = Vector2.zero;
@@ -379,16 +442,17 @@ public class Enemy : MonoBehaviour {
     {
         m_canAttack = false;
         m_color = m_renderer.material.color;
-        StartCoroutine(ChargeEnemyAttack());
+        m_coroutine = StartCoroutine(ChargeEnemyAttack());
     }
 
     public void StartRangeAttack()
     {
         m_canAttack = false;
+        m_color = m_renderer.material.color;
         m_rangeRenderere.material.color = m_rangeColor;
         // 範囲攻撃用オブジェクトを敵の方向へ調整
-        m_rangeAttack.SetRange(m_targetMinion);
-        StartCoroutine(ChargeEnemyRangeAttack());
+        m_rangeAttack.SetRange(m_target);
+        m_coroutine = StartCoroutine(ChargeEnemyRangeAttack());
     }
 
     private IEnumerator ChargeEnemyAttack()
@@ -407,7 +471,8 @@ public class Enemy : MonoBehaviour {
                 m_renderer.material.color = color;
                 m_nowTime = 0.0f;
                 // 攻撃コルーチンへ
-                StartCoroutine(EnemyAttack());
+                m_mode = ENEMY_MODE.MOVE_ATTACK;
+                m_coroutine = StartCoroutine(EnemyAttack());
                 yield break;
             }
             yield return null;
@@ -421,16 +486,17 @@ public class Enemy : MonoBehaviour {
         {
             m_nowTime += Time.deltaTime;
             float ratio = m_nowTime / m_rangeAttackTime;
-            var color = m_rangeColor;
+            var color = m_renderer.material.color;
             color.a = 1.0f - ratio;
-            m_rangeRenderere.material.color = color;
+            m_renderer.material.color = color;
             if (ratio > 0.8f)
             {
                 color.a = 1.0f;
-                m_rangeRenderere.material.color = Color.red;
+                m_renderer.material.color = color;
                 m_nowTime = 0.0f;
                 // 攻撃コルーチンへ
-                StartCoroutine(EnemyRangeAttack());
+                m_mode = ENEMY_MODE.RANGE_ATTACK;
+                m_coroutine = StartCoroutine(EnemyRangeAttack());
                 yield break;
             }
             yield return null;
@@ -443,43 +509,68 @@ public class Enemy : MonoBehaviour {
         //color = Color.black;
         //m_renderer.material.color = color;
         // 敵のHPを減らす
-        m_targetMinion.Damage(m_damage,this);
+        if (m_targetType == TARGET_TYPE.MINION)
+        {
+            m_targetMinion.Damage(m_damage, this);
+            if (m_targetMinion.m_mode == Minion.MINION_MODE.DEAD)
+            {
+                m_enemyAttack.m_HitObjList.Remove(m_target);
+                m_target.gameObject.SetActive(false);
+            }
+        }
+        else
+        {
+            m_target.GetComponent<Player>().Damage(m_damage);
+        }
         yield return new WaitForSeconds(m_afterAttackTime);
-        m_mode = ENEMY_MODE.WAIT;
+        m_mode = ENEMY_MODE.MOVE_ATTACK;
         m_rigidbody.bodyType = RigidbodyType2D.Dynamic;
         m_renderer.material.color = m_color;
         m_attackedTime = Time.time;
-        m_targetMinion = null;
+        m_target = null;
         yield break;
     }
 
     IEnumerator EnemyRangeAttack()
     {
-        Debug.Log(m_rangeAttack.m_HitMinionList.Count + "人に攻撃");
-        foreach(var minion in m_rangeAttack.m_HitMinionList)
+        // Debug.Log(m_rangeAttack.m_HitMinionList.Count + "人に攻撃");
+        foreach (var hitObj in m_rangeAttack.m_HitObjList)
         {
-            minion.Damage(m_rangeAttackDamage,this);
+            if (hitObj.tag == "Minion")
+            {
+                hitObj.GetComponent<Minion>().Damage(m_rangeAttackDamage, this);
+            }
+            else
+            {
+                hitObj.GetComponent<Player>().Damage(m_rangeAttackDamage);
+            }
+        }
+        List<GameObject> objs = new List<GameObject>(m_rangeAttack.m_HitObjList);
+        foreach (var obj in objs)
+        {
+            if (obj.tag == "Minion")
+            {
+                if (obj.GetComponent<Minion>().m_mode == Minion.MINION_MODE.DEAD)
+                {
+                    m_rangeAttack.m_HitObjList.Remove(obj);
+                    obj.SetActive(false);
+                }
+            }
         }
         yield return new WaitForSeconds(m_afterAttackTime);
-        m_mode = ENEMY_MODE.WAIT;
+        m_mode = ENEMY_MODE.MOVE_ATTACK;
         m_rigidbody.bodyType = RigidbodyType2D.Dynamic;
+        m_renderer.material.color = m_color;
         Color color = m_rangeRenderere.material.color;
         color.a = 0.0f;
         m_rangeRenderere.material.color = color;
         m_rangeAttack.transform.eulerAngles = Vector3.zero;
         m_rangeAttack.transform.localPosition = Vector3.zero;
         m_attackedTime = Time.time;
-        m_targetMinion = null;
+        m_target = null;
         yield break;
     }
 
-    public void DeleteMinionAttackList(Minion minion)
-    {
-        if (m_enemyAttack.m_HitMinionList.Contains(minion))
-        {
-            m_enemyAttack.m_HitMinionList.Remove(minion);
-        }
-    }
 
     public bool CheckCanAttack()
     {
@@ -524,7 +615,10 @@ public class Enemy : MonoBehaviour {
 
     public void StopEnemyCoroutine()
     {
-        StopAllCoroutines();
+        if (m_coroutine != null)
+        {
+            StopCoroutine(m_coroutine);
+        }
     }
 
 
@@ -553,7 +647,11 @@ public class Enemy : MonoBehaviour {
 
     public void StopMinionCoroutine()
     {
-        StopAllCoroutines();
+        if (m_coroutine != null)
+        {
+            StopCoroutine(m_coroutine);
+        }
+
     }
 
 

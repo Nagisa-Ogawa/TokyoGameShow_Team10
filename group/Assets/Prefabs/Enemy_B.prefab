@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2711791623363661310}
   - component: {fileID: 4635256497563771117}
   - component: {fileID: 8582040241008435533}
-  m_Layer: 6
+  m_Layer: 10
   m_Name: RangeAttack
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -266,7 +266,7 @@ MonoBehaviour:
   m_enemyAttack: {fileID: 1606219555076759578}
   m_renderer: {fileID: 2639703910480705718}
   m_addAlpha: 0.01
-  m_chaseSpeed: 3
+  m_chaseSpeed: 5
   m_attackTime: 0.5
   m_nowTime: 0
   m_afterAttackTime: 0.3
@@ -277,7 +277,7 @@ MonoBehaviour:
   m_rangeAttack: {fileID: 8582040241008435533}
   m_addAlphaRange: 0.02
   m_attackTimeRange: 2
-  m_rangeAttackDamage: 2
+  m_rangeAttackDamage: 3
   m_rangeAttackCoolDown: 10
   m_rangeAttackTime: 4
   m_rangeAfterAttackTime: 1
@@ -309,7 +309,7 @@ GameObject:
   - component: {fileID: 3719965256846906738}
   - component: {fileID: 2911332583305089433}
   - component: {fileID: 1606219555076759578}
-  m_Layer: 6
+  m_Layer: 9
   m_Name: EnemyAttackCollider
   m_TagString: Untagged
   m_Icon: {fileID: 0}

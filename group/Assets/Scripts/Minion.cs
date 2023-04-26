@@ -10,6 +10,7 @@ public class Minion:MonoBehaviour
     {
         FOLLOW,
         MOVE_ENEMY,
+        WAIT_COOLDOWN,
         ATTACK,
         ESCAPE,
         WAIT,
@@ -58,6 +59,10 @@ public class Minion:MonoBehaviour
 
     public GameObject m_hpui { get; set; }
 
+    private Coroutine m_coroutine = null;
+    [SerializeField]
+    private AttackCollider m_attackCollider = null;
+
     private void Awake()
     {
         m_MinionController = GameObject.Find("MinionController").GetComponent<MinionController>();
@@ -94,15 +99,28 @@ public class Minion:MonoBehaviour
                 UpdateMoveToTarget();
                 break;
             case MINION_MODE.MOVE_ENEMY:
-                CheckReturnPlayer();
-                UpdateMoveToTarget();
-                break;
-            case MINION_MODE.ATTACK:
-                if (CheckTargetLeave())
+                if(m_attackCollider.m_HitEnemyList.Count > 0)
+                {
+                    // Ç≈Ç´ÇΩÇÁàÍî‘ãﬂÇ¢ìG
+                    m_targetEnemy = m_attackCollider.m_HitEnemyList[0];
+                    m_rigidbody.bodyType = RigidbodyType2D.Kinematic;
+                    m_rigidbody.velocity = Vector3.zero;
+                    m_mode = MINION_MODE.WAIT_COOLDOWN;
+                }
+                else
                 {
                     CheckReturnPlayer();
-                    StopAttack();
+                    UpdateMoveToTarget();
                 }
+                break;
+            case MINION_MODE.WAIT_COOLDOWN:
+                if (CheckCanAttack())
+                {
+                    StartAttack();
+                }
+                break;
+            case MINION_MODE.ATTACK:
+                CheckReturnPlayer();
                 break;
             case MINION_MODE.ESCAPE:
                 if (m_targetEnemy == null) return;
@@ -112,7 +130,8 @@ public class Minion:MonoBehaviour
                     m_mode = MINION_MODE.WAIT;
                     //var rot = Quaternion.FromToRotation(Vector3.up, m_target.transform.position - transform.position);
                     //transform.rotation = rot;
-                    m_rigidbody.bodyType = RigidbodyType2D.Static;
+                    m_rigidbody.velocity= Vector3.zero;
+                    m_rigidbody.bodyType = RigidbodyType2D.Kinematic;
                 }
                 else
                 {
@@ -260,28 +279,6 @@ public class Minion:MonoBehaviour
         // m_velocity = Vector2.zero;
     }
 
-    public bool CheckTargetLeave()
-    {
-        if (m_targetEnemy == null)
-        {
-            return true;
-        }
-        if(m_targetEnemy.m_type==ENEMY_TYPE.ENEMY_A||m_targetEnemy.m_type==ENEMY_TYPE.ENEMY_B)
-        {
-            if ((transform.position - m_targetEnemy.transform.position).magnitude >= m_stopAttackDistance)
-            {
-                return true;
-            }
-        }
-        else if(m_targetEnemy.m_type==ENEMY_TYPE.BOSS_B)
-        {
-            if ((transform.position - m_targetEnemy.transform.position).magnitude >= m_stopAttackBossDistance)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
 
     public void CheckReturnPlayer()
     {
@@ -294,8 +291,9 @@ public class Minion:MonoBehaviour
     }
     public void StartAttack()
     {
+        m_mode = Minion.MINION_MODE.ATTACK;
         m_canAttack = false;
-        StartCoroutine(ChargeAttack());
+        m_coroutine = StartCoroutine(ChargeAttack());
     }
 
     IEnumerator ChargeAttack() 
@@ -314,7 +312,7 @@ public class Minion:MonoBehaviour
                 m_renderer.material.color = color;
                 m_nowTime = 0.0f;
                 // çUåÇÉRÉãÅ[É`ÉìÇ÷
-                StartCoroutine(Attack());
+                m_coroutine = StartCoroutine(Attack());
                 yield break;
             }
             yield return null;
@@ -345,15 +343,18 @@ public class Minion:MonoBehaviour
         }
         else
         {
-            gameObject.SetActive(false);
+            // gameObject.SetActive(false);
             m_hpui.SetActive(false);
             // ìGÇÃçUåÇîÕàÕì‡Ç≈éÄñSÇµÇΩÇ»ÇÁìGÇÃçUåÇâ¬î\ÉäÉXÉgÇ©ÇÁé©ï™Çè¡ãé
-            enemy.DeleteMinionAttackList(this);
+            // enemy.DeleteMinionAttackList(this);
             // É^Å[ÉQÉbÉgÇïœçX
             m_mode = MINION_MODE.DEAD;
             m_renderer.material.color = m_color;
             m_rigidbody.bodyType = RigidbodyType2D.Dynamic;
-            StopAllCoroutines();
+            if (m_coroutine != null)
+            {
+                StopCoroutine(m_coroutine);
+            }
             m_target = null;
             m_targetEnemy = null;
             m_nowTime = 0.0f;
@@ -383,18 +384,12 @@ public class Minion:MonoBehaviour
         }
     }
 
-    public void StopAttack()
-    {
-        m_mode = MINION_MODE.MOVE_ENEMY;
-        m_renderer.material.color = m_color;
-        m_rigidbody.bodyType = RigidbodyType2D.Dynamic;
-        StopAllCoroutines();
-        m_nowTime = 0.0f;
-    }
-
     public void StopMinionCoroutine()
     {
-        StopAllCoroutines();
+        if (m_coroutine != null)
+        {
+            StopCoroutine(m_coroutine);
+        }
     }
 
 }

@@ -67,6 +67,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "PLAYER_ATTACK",
+                    "type": "Button",
+                    "id": "7a6609cf-17b1-491f-a67d-efcd1a326fa0",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -353,6 +362,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "DECISION",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "3f637bd6-bde6-47f2-9534-05669a09191d",
+                    "path": "<Gamepad>/rightShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "PLAYER_ATTACK",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
