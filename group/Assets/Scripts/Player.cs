@@ -100,9 +100,13 @@ public class Player : MonoBehaviour
         isCanAttack=true;
     }
     //// Update is called once per frame
-    //void Update()
-    //{
-    //}
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            m_minionController.ChangeMode(Minion.MINION_MODE.MOVE_ENEMY);
+        }
+    }
 
     public void Damage(int damage)
     {

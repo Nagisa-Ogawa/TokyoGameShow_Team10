@@ -89,8 +89,6 @@ public class Enemy : MonoBehaviour {
     [SerializeField]
     private float m_attackTimeRange = 2.0f;
     [SerializeField]
-    private int m_rangeAttackDamage = 5;
-    [SerializeField]
     private float m_rangeAttackCoolDown=3.0f;
     [SerializeField]
     private float m_rangeAttackTime = 2.0f;
@@ -115,7 +113,7 @@ public class Enemy : MonoBehaviour {
         Color color = m_rangeRenderere.material.color;
         color.a = 0.0f;
         m_rangeRenderere.material.color= color;
-
+        m_rangeAttack.gameObject.SetActive(false);
         m_territoryPos = gameObject.transform.position;
     }
 
@@ -450,6 +448,8 @@ public class Enemy : MonoBehaviour {
         m_canAttack = false;
         m_color = m_renderer.material.color;
         m_rangeRenderere.material.color = m_rangeColor;
+        m_rangeAttack.gameObject.GetComponent<BoxCollider2D>().enabled = false;
+        m_rangeAttack.gameObject.SetActive(true);
         // 範囲攻撃用オブジェクトを敵の方向へ調整
         m_rangeAttack.SetRange(m_target);
         m_coroutine = StartCoroutine(ChargeEnemyRangeAttack());
@@ -533,39 +533,47 @@ public class Enemy : MonoBehaviour {
 
     IEnumerator EnemyRangeAttack()
     {
+        // 範囲攻撃の当たり判定を1フレームだけする
+        var collider = m_rangeAttack.gameObject.GetComponent<BoxCollider2D>();
+        collider.enabled = true;
+        yield return new WaitForSeconds(0.2f);
+        collider.enabled = false;
         // Debug.Log(m_rangeAttack.m_HitMinionList.Count + "人に攻撃");
-        foreach (var hitObj in m_rangeAttack.m_HitObjList)
-        {
-            if (hitObj.tag == "Minion")
-            {
-                hitObj.GetComponent<Minion>().Damage(m_rangeAttackDamage, this);
-            }
-            else
-            {
-                hitObj.GetComponent<Player>().Damage(m_rangeAttackDamage);
-            }
-        }
-        List<GameObject> objs = new List<GameObject>(m_rangeAttack.m_HitObjList);
-        foreach (var obj in objs)
-        {
-            if (obj.tag == "Minion")
-            {
-                if (obj.GetComponent<Minion>().m_mode == Minion.MINION_MODE.DEAD)
-                {
-                    m_rangeAttack.m_HitObjList.Remove(obj);
-                    obj.SetActive(false);
-                }
-            }
-        }
+        //foreach (var hitObj in m_rangeAttack.m_HitObjList)
+        //{
+        //    if (hitObj.tag == "Minion")
+        //    {
+        //        hitObj.GetComponent<Minion>().Damage(m_rangeAttackDamage, this);
+        //    }
+        //    else
+        //    {
+        //        hitObj.GetComponent<Player>().Damage(m_rangeAttackDamage);
+        //    }
+        //}
+        //List<GameObject> objs = new List<GameObject>(m_rangeAttack.m_HitObjList);
+        //foreach (var obj in objs)
+        //{
+        //    if (obj.tag == "Minion")
+        //    {
+        //        if (obj.GetComponent<Minion>().m_mode == Minion.MINION_MODE.DEAD)
+        //        {
+        //            m_rangeAttack.m_HitObjList.Remove(obj);
+        //            obj.SetActive(false);
+        //        }
+        //    }
+        //}
         yield return new WaitForSeconds(m_afterAttackTime);
+        m_rangeAttack.DeleteList();
         m_mode = ENEMY_MODE.MOVE_ATTACK;
         m_rigidbody.bodyType = RigidbodyType2D.Dynamic;
         m_renderer.material.color = m_color;
         Color color = m_rangeRenderere.material.color;
         color.a = 0.0f;
+        Debug.Log("透明にしました");
         m_rangeRenderere.material.color = color;
         m_rangeAttack.transform.eulerAngles = Vector3.zero;
         m_rangeAttack.transform.localPosition = Vector3.zero;
+
         m_attackedTime = Time.time;
         m_target = null;
         yield break;

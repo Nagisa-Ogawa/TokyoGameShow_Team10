@@ -343,7 +343,7 @@ public class Minion:MonoBehaviour
         }
         else
         {
-            // gameObject.SetActive(false);
+            gameObject.SetActive(false);
             m_hpui.SetActive(false);
             // “G‚ÌUŒ‚”ÍˆÍ“à‚Å€–S‚µ‚½‚È‚ç“G‚ÌUŒ‚‰Â”\ƒŠƒXƒg‚©‚ç©•ª‚ğÁ‹
             // enemy.DeleteMinionAttackList(this);
