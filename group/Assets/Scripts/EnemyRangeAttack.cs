@@ -33,11 +33,13 @@ public class EnemyRangeAttack : MonoBehaviour
 
     public void DeleteList()
     {
+        Debug.Log(m_hitObjList.Count + "l‚ÉUŒ‚‚µ‚Ü‚µ‚½");
         m_hitObjList.Clear();
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerStay2D(Collider2D collision)
     {
+        Debug.Log(collision.name + "‚Æ“–‚½‚Á‚½");
         // ‚Ü‚¾ˆê“x‚à“–‚½‚Á‚Ä‚È‚¢‚È‚ç
         if ((collision.tag=="Minion"||collision.tag=="Player")&&
                 m_enemy.m_mode == Enemy.ENEMY_MODE.RANGE_ATTACK&&

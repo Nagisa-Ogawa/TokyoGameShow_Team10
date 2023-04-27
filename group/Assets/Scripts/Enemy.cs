@@ -97,7 +97,7 @@ public class Enemy : MonoBehaviour {
     private Color m_rangeColor;
     [SerializeField]
     private SpriteRenderer m_rangeRenderere = null;
-
+    private int m_rangeLayerNo = -1;
 
 
     private void Awake()
@@ -113,6 +113,8 @@ public class Enemy : MonoBehaviour {
         Color color = m_rangeRenderere.material.color;
         color.a = 0.0f;
         m_rangeRenderere.material.color= color;
+        m_rangeLayerNo = m_rangeAttack.gameObject.layer;
+        m_rangeAttack.gameObject.layer = 12;
         m_rangeAttack.gameObject.SetActive(false);
         m_territoryPos = gameObject.transform.position;
     }
@@ -207,7 +209,7 @@ public class Enemy : MonoBehaviour {
                 break;
             case ENEMY_MODE.WAIT_RANGE_ATTACK_COOLDWON:
                 // 攻撃可能なら攻撃へ
-                if (CheckCanAttack())
+                if (CheckCanRangeAttack())
                 {
                     m_mode = ENEMY_MODE.SETUP_RANGE_ATTACK;
                     StartRangeAttack();
@@ -253,8 +255,8 @@ public class Enemy : MonoBehaviour {
 
                     m_rigidbody.bodyType = RigidbodyType2D.Kinematic;
                     m_rigidbody.velocity = Vector3.zero;
-                    m_mode = ENEMY_MODE.WAIT_ATTACK_COOLDWON;
-                    // m_mode = ENEMY_MODE.WAIT_RANGE_ATTACK_COOLDWON;
+                    // m_mode = ENEMY_MODE.WAIT_ATTACK_COOLDWON;
+                    m_mode = ENEMY_MODE.WAIT_RANGE_ATTACK_COOLDWON;
                 }
                 else
                 {
@@ -448,7 +450,7 @@ public class Enemy : MonoBehaviour {
         m_canAttack = false;
         m_color = m_renderer.material.color;
         m_rangeRenderere.material.color = m_rangeColor;
-        m_rangeAttack.gameObject.GetComponent<BoxCollider2D>().enabled = false;
+        // m_rangeAttack.gameObject.GetComponent<BoxCollider2D>().enabled = false;
         m_rangeAttack.gameObject.SetActive(true);
         // 範囲攻撃用オブジェクトを敵の方向へ調整
         m_rangeAttack.SetRange(m_target);
@@ -486,13 +488,13 @@ public class Enemy : MonoBehaviour {
         {
             m_nowTime += Time.deltaTime;
             float ratio = m_nowTime / m_rangeAttackTime;
-            var color = m_renderer.material.color;
+            var color = m_rangeRenderere.material.color;
             color.a = 1.0f - ratio;
-            m_renderer.material.color = color;
+            m_rangeRenderere.material.color = color;
             if (ratio > 0.8f)
             {
                 color.a = 1.0f;
-                m_renderer.material.color = color;
+                m_rangeRenderere.material.color = color;
                 m_nowTime = 0.0f;
                 // 攻撃コルーチンへ
                 m_mode = ENEMY_MODE.RANGE_ATTACK;
@@ -534,10 +536,14 @@ public class Enemy : MonoBehaviour {
     IEnumerator EnemyRangeAttack()
     {
         // 範囲攻撃の当たり判定を1フレームだけする
-        var collider = m_rangeAttack.gameObject.GetComponent<BoxCollider2D>();
-        collider.enabled = true;
-        yield return new WaitForSeconds(0.2f);
-        collider.enabled = false;
+        //var collider = m_rangeAttack.gameObject.GetComponent<BoxCollider2D>();
+        //collider.enabled = true;
+        m_rangeAttack.gameObject.layer = m_rangeLayerNo;
+        yield return new WaitForSeconds(0.1f);
+        //yield return null;
+        //yield return null;
+        m_rangeAttack.gameObject.layer = 12;
+        //collider.enabled = false;
         // Debug.Log(m_rangeAttack.m_HitMinionList.Count + "人に攻撃");
         //foreach (var hitObj in m_rangeAttack.m_HitObjList)
         //{
@@ -569,7 +575,6 @@ public class Enemy : MonoBehaviour {
         m_renderer.material.color = m_color;
         Color color = m_rangeRenderere.material.color;
         color.a = 0.0f;
-        Debug.Log("透明にしました");
         m_rangeRenderere.material.color = color;
         m_rangeAttack.transform.eulerAngles = Vector3.zero;
         m_rangeAttack.transform.localPosition = Vector3.zero;

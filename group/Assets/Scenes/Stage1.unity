@@ -76848,7 +76848,7 @@ MonoBehaviour:
   m_minionB: {fileID: 8581922048600788608, guid: 0b5055c8958c9f64c8932dc2ab51d329, type: 3}
   m_canvas: {fileID: 1718988613}
   m_hpui: {fileID: 9092834167924841898, guid: 8b42acb1d52ba9844953a4595c4ff5a1, type: 3}
-  m_minionMax: 5
+  m_minionMax: 10
 --- !u!4 &1204423539
 Transform:
   m_ObjectHideFlags: 0
