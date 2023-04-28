@@ -26,20 +26,20 @@ public class EnemyRangeAttack : MonoBehaviour
 
     public void SetRange(GameObject target)
     {
-        transform.position += (target.transform.position - transform.position).normalized * m_rangeDistance;
         var rot = Quaternion.FromToRotation(Vector3.up,(target.transform.position-transform.position) );
         transform.rotation = rot;
+        transform.position += (target.transform.position - transform.position).normalized * m_rangeDistance;
     }
 
     public void DeleteList()
     {
-        Debug.Log(m_hitObjList.Count + "êlÇ…çUåÇÇµÇ‹ÇµÇΩ");
+        // Debug.Log(m_hitObjList.Count + "êlÇ…çUåÇÇµÇ‹ÇµÇΩ");
         m_hitObjList.Clear();
     }
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        Debug.Log(collision.name + "Ç∆ìñÇΩÇ¡ÇΩ");
+        // Debug.Log(collision.name + "Ç∆ìñÇΩÇ¡ÇΩ");
         // Ç‹ÇæàÍìxÇ‡ìñÇΩÇ¡ÇƒÇ»Ç¢Ç»ÇÁ
         if ((collision.tag=="Minion"||collision.tag=="Player")&&
                 m_enemy.m_mode == Enemy.ENEMY_MODE.RANGE_ATTACK&&

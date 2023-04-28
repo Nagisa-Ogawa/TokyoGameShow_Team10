@@ -12,8 +12,11 @@ public class Player : MonoBehaviour
     [SerializeField]
     private int m_hp = 5;
     public int m_HP { get { return m_hp; } private set { m_hp = value; } }
+    private int m_maxHP = 0;
     [SerializeField]
     private MinionController m_minionController = null;
+    [SerializeField]
+    private EnemyController m_enemyController = null;
     private Vector2 m_dir = Vector2.zero;
     Rigidbody2D rigidBody;
     [SerializeField]
@@ -41,6 +44,7 @@ public class Player : MonoBehaviour
         rigidBody=GetComponent<Rigidbody2D>();
         m_pAttack.gameObject.SetActive(false);
         m_attackDir = Vector2.zero;
+        m_maxHP = m_hp;
     }
 
     private void OnMove(InputValue value)
@@ -50,6 +54,10 @@ public class Player : MonoBehaviour
         if(m_dir != Vector2.zero)
         {
             m_attackDir = m_dir;
+        }
+        else
+        {
+            m_attackDir = Vector2.up;
         }
     }
 
@@ -138,8 +146,12 @@ public class Player : MonoBehaviour
     {
         if (collision.gameObject.tag == "Home")
         {
+            m_hp = m_maxHP;
             // Ž€‚ñ‚Å‚¢‚éƒ~ƒjƒIƒ“‚ð•œŠˆ
             m_minionController.RevivalMinion(collision.transform.position);
+            // “G‚à•œŠˆ
+            m_enemyController.ActiveAll();
+
         }
     }
 }

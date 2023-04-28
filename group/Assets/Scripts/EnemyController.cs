@@ -15,6 +15,7 @@ public class EnemyController : MonoBehaviour
     private GameObject canvas = null;
     // “G‚ÌƒŠƒXƒg
     private List<Enemy> m_enemyList =new List<Enemy>();
+    private List<GameObject> m_enemyUIList = new List<GameObject>();
     [SerializeField]
     private Player m_player = null;
     [SerializeField]
@@ -35,6 +36,7 @@ public class EnemyController : MonoBehaviour
         {
             m_enemyList.Add(enemy.GetComponent<Enemy>());
             var hpui = Instantiate(m_HPUI, canvas.transform);
+            m_enemyUIList.Add(hpui);
             hpui.GetComponent<EnemyHPUI>().m_enemy = enemy.GetComponent<Enemy>();
             enemy.GetComponent<Enemy>().m_hpui = hpui;
         }
@@ -80,9 +82,28 @@ public class EnemyController : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
-    {
+    //void Update()
+    //{
         
+    //}
+
+    public void ActiveAll()
+    {
+        foreach(var enemy in m_enemyList)
+        {
+            if (enemy.m_mode == Enemy.ENEMY_MODE.DEAD)
+            {
+                enemy.gameObject.SetActive(true);
+                enemy.RevivalEnemy();
+            }
+        }
+        foreach (var eUI in m_enemyUIList)
+        {
+            if (eUI.activeSelf == false)
+            {
+                eUI.SetActive(true);
+            }
+        }
     }
 
     public IEnumerator ChangeScene()

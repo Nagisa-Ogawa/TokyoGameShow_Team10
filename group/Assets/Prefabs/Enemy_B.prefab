@@ -126,7 +126,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_enemy: {fileID: 2639703910480705712}
   m_rangeDistance: 2
-  m_rangeAttackDamage: 5
+  m_rangeAttackDamage: 2
 --- !u!1 &2639703910480705675
 GameObject:
   m_ObjectHideFlags: 0
@@ -253,7 +253,7 @@ MonoBehaviour:
   m_type: 1
   m_hpui: {fileID: 0}
   m_rigidbody: {fileID: 2639703910480705716}
-  m_HP: 50
+  m_HP: 15
   m_damage: 1
   m_speed: 2
   m_mutekitime: 3
@@ -280,7 +280,7 @@ MonoBehaviour:
   m_addAlphaRange: 0.02
   m_attackTimeRange: 2
   m_rangeAttackCoolDown: 3
-  m_rangeAttackTime: 4
+  m_rangeAttackTime: 3
   m_rangeAfterAttackTime: 1
   m_rangeRenderere: {fileID: 2711791623363661310}
 --- !u!58 &8078862708849176497

@@ -36,6 +36,7 @@ public class Enemy : MonoBehaviour {
     [SerializeField]
     private Rigidbody2D m_rigidbody = null;
     public int m_HP = 3;
+    private int m_maxHP = 0;
     [SerializeField]
     private int m_damage = 2;
     [SerializeField]
@@ -80,6 +81,8 @@ public class Enemy : MonoBehaviour {
     public float m_attackedTime = 0.0f;
     public Color m_color;
     public bool m_canAttack = true;
+    [SerializeField]
+    private bool isRange = true;
 
     // îÕàÕçUåÇä÷åW
     [SerializeField]
@@ -117,6 +120,7 @@ public class Enemy : MonoBehaviour {
         m_rangeAttack.gameObject.layer = 12;
         m_rangeAttack.gameObject.SetActive(false);
         m_territoryPos = gameObject.transform.position;
+        m_maxHP = m_HP;
     }
 
     // Update is called once per frame
@@ -170,8 +174,15 @@ public class Enemy : MonoBehaviour {
 
                     m_rigidbody.bodyType = RigidbodyType2D.Kinematic;
                     m_rigidbody.velocity = Vector3.zero;
-                    // m_mode = ENEMY_MODE.WAIT_ATTACK_COOLDWON;
-                    m_mode = ENEMY_MODE.WAIT_RANGE_ATTACK_COOLDWON;
+                    if (isRange)
+                    {
+                        m_mode = ENEMY_MODE.WAIT_RANGE_ATTACK_COOLDWON;
+                    }
+                    else
+                    {
+                        m_mode = ENEMY_MODE.WAIT_ATTACK_COOLDWON;
+
+                    }
                 }
                 else
                 {
@@ -256,7 +267,15 @@ public class Enemy : MonoBehaviour {
                     m_rigidbody.bodyType = RigidbodyType2D.Kinematic;
                     m_rigidbody.velocity = Vector3.zero;
                     // m_mode = ENEMY_MODE.WAIT_ATTACK_COOLDWON;
-                    m_mode = ENEMY_MODE.WAIT_RANGE_ATTACK_COOLDWON;
+                    if (isRange)
+                    {
+                        m_mode = ENEMY_MODE.WAIT_RANGE_ATTACK_COOLDWON;
+                    }
+                    else
+                    {
+                        m_mode = ENEMY_MODE.WAIT_ATTACK_COOLDWON;
+
+                    }
                 }
                 else
                 {
@@ -435,7 +454,18 @@ public class Enemy : MonoBehaviour {
         }
         m_nowTime = 0.0f;
         m_renderer.material.color = m_color;
-        m_vec = Vector2.zero;
+        m_vec = Vector2.zero; Color color = m_rangeRenderere.material.color;
+        color.a = 0.0f;
+        m_rangeRenderere.material.color = color;
+        m_rangeAttack.transform.eulerAngles = Vector3.zero;
+        m_rangeAttack.transform.localPosition = Vector3.zero;
+        m_rangeAttack.gameObject.layer = 12;
+    }
+
+    public void RevivalEnemy()
+    {
+        m_HP = m_maxHP;
+        ResetEnemy();
     }
 
     public void StartAttack()
