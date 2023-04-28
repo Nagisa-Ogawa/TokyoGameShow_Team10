@@ -177,6 +177,7 @@ MonoBehaviour:
   m_canAttack: 1
   m_escapeDistance: 10
   m_speed: 4
+  m_escapeSpeed: 8
   m_stopAttackDistance: 2
   m_stopAttackBossDistance: 5
   m_Param: {fileID: 11400000, guid: 0233a49b32b0659458e2e0ebec4bbf45, type: 2}

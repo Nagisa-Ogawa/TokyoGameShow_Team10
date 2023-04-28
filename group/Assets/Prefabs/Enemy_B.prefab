@@ -276,11 +276,12 @@ MonoBehaviour:
   m_attackedTime: 0
   m_color: {r: 0, g: 0, b: 0, a: 0}
   m_canAttack: 1
+  isRange: 1
   m_rangeAttack: {fileID: 8582040241008435533}
   m_addAlphaRange: 0.02
   m_attackTimeRange: 2
   m_rangeAttackCoolDown: 3
-  m_rangeAttackTime: 3
+  m_rangeAttackTime: 1.5
   m_rangeAfterAttackTime: 1
   m_rangeRenderere: {fileID: 2711791623363661310}
 --- !u!58 &8078862708849176497

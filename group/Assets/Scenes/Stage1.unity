@@ -77032,7 +77032,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2639703910480705675, guid: cf7e3561a0c2d804f9b28141f523c0da, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2639703910480705712, guid: cf7e3561a0c2d804f9b28141f523c0da, type: 3}
       propertyPath: m_moveDirection.x
@@ -77553,7 +77553,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2639703910480705712, guid: ac2378c542593614db42a5db7c161a32, type: 3}
       propertyPath: isRange
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2639703910480705712, guid: ac2378c542593614db42a5db7c161a32, type: 3}
       propertyPath: m_Enabled

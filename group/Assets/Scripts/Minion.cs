@@ -40,6 +40,8 @@ public class Minion:MonoBehaviour
     public float m_escapeDistance = 50.0f;
     public float m_speed = 5.0f;
     [SerializeField]
+    private float m_escapeSpeed = 10.0f;
+    [SerializeField]
     private float m_stopAttackDistance = 2.0f;
     [SerializeField]
     private float m_stopAttackBossDistance = 5.0f;
@@ -271,7 +273,14 @@ public class Minion:MonoBehaviour
         m_velocity = m_vec;
         Vector3 dir = m_velocity.normalized;
         // float speed = Random.Range(m_Param.minSpeed, m_Param.maxSpeed);
-        m_velocity = m_speed * dir;
+        if (m_mode == MINION_MODE.ESCAPE)
+        {
+            m_velocity = m_escapeSpeed * dir;
+        }
+        else
+        {
+            m_velocity = m_speed * dir;
+        }
         //var rot = Quaternion.FromToRotation(Vector3.up, m_velocity);
         //transform.rotation = rot;
         m_rigidbody.velocity = m_velocity;
@@ -282,6 +291,10 @@ public class Minion:MonoBehaviour
 
     public void CheckReturnPlayer()
     {
+        if (m_mode == MINION_MODE.DEAD)
+        {
+            return;
+        }
         Vector3 pPos = m_player.transform.position;
         var player = m_player.GetComponent<Player>();
         if ((pPos - transform.position).magnitude >= player.m_ReturnDistance)
