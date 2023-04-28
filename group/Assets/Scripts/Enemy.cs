@@ -465,6 +465,7 @@ public class Enemy : MonoBehaviour {
     public void RevivalEnemy()
     {
         m_HP = m_maxHP;
+        transform.position = m_territoryPos;
         ResetEnemy();
     }
 
