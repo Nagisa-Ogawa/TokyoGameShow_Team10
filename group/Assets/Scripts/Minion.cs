@@ -19,8 +19,13 @@ public class Minion:MonoBehaviour
     }
     public enum MINION_TYPE
     {
-        MINION_A,
-        MINION_B,
+        LADYBIRD,
+        ANTS,
+        BEE,
+        BUTTERFLY,
+        SPIDER,
+        DRAGONFLY,
+        MANTIS,
     }
     public GameObject m_playerBack {get;private set;}
     public MINION_MODE m_mode;
@@ -28,6 +33,7 @@ public class Minion:MonoBehaviour
     public int m_HP = 3;
     public int m_maxHP {get; private set;}
     public int m_damage = 2;
+    public int m_Damage { get { return m_damage; } private set { m_damage = value; } }
     public Renderer m_renderer = null;
     public float m_addAlpha = 0.02f;
     public float m_attackTime = 2.0f;
@@ -39,6 +45,7 @@ public class Minion:MonoBehaviour
     public bool m_canAttack = true;
     public float m_escapeDistance = 50.0f;
     public float m_speed = 5.0f;
+    public float m_Speed { get { return m_speed; } private set { m_speed = value; } }
     [SerializeField]
     private float m_escapeSpeed = 10.0f;
     [SerializeField]
@@ -64,6 +71,21 @@ public class Minion:MonoBehaviour
     private Coroutine m_coroutine = null;
     [SerializeField]
     private AttackCollider m_attackCollider = null;
+
+    // レベルアップ関係
+    [SerializeField]
+    private int m_level = 1;
+    public int m_Level { get { return m_level; } private set {  m_level = value; } }
+    [SerializeField]
+    private int m_addHp = 5;
+    public int m_AddHp { get {  return m_addHp; } private set {  m_addHp = value; } }
+    [SerializeField]
+    private int m_addDamage = 1;
+    public int m_AddDamage { get {  return m_addDamage; } private set { m_addDamage = value; } }
+    [SerializeField]
+    private int m_addSpeed = 1;
+    public int m_AddSpeed { get {  return m_addSpeed; } private set { m_addSpeed = value; } }
+
 
     private void Awake()
     {
@@ -403,6 +425,16 @@ public class Minion:MonoBehaviour
         {
             StopCoroutine(m_coroutine);
         }
+    }
+
+    public void LevelUp()
+    {
+        Debug.Log("レベルアップ");
+        m_level++;
+        m_maxHP += m_addHp;
+        m_damage += m_addDamage;
+        m_speed += m_addSpeed;
+        // m_chaseSpeed += m_addSpeed;
     }
 
 }

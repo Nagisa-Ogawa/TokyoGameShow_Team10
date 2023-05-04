@@ -76,6 +76,33 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "UI_DOWN",
+                    "type": "Button",
+                    "id": "d7026caf-5660-4fec-a5e9-544871779e85",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "UI_UP",
+                    "type": "Button",
+                    "id": "c1686e41-c2c9-43f9-9c39-44485235f3df",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "UI_OPEN",
+                    "type": "Button",
+                    "id": "4240c342-e2f4-49c6-aa5b-965592127ed5",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -373,6 +400,39 @@
                     "processors": "",
                     "groups": "Gamepad",
                     "action": "PLAYER_ATTACK",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "51370930-1a9c-4927-84d6-72706ba43ebc",
+                    "path": "<Gamepad>/leftStick/down",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "UI_DOWN",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "727e87e2-eb34-47ed-8f98-e6f6b19c6eaa",
+                    "path": "<Gamepad>/leftStick/up",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "UI_UP",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "cc487afe-137f-4310-965d-39de7d86c96f",
+                    "path": "<Gamepad>/buttonNorth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "UI_OPEN",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

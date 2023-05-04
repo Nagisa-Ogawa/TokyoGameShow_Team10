@@ -19,10 +19,16 @@ public class Enemy : MonoBehaviour {
         DEAD,
     }
     public enum ENEMY_TYPE {
-        ENEMY_A,
-        ENEMY_B,
-        BOSS_B,
+        LADYBIRD,
+        ANTS,
+        BEE,
+        BUTTERFLY,
+        SPIDER,
+        DRAGONFLY,
+        MANTIS,
+        BOSS_ANTS,
     }
+
     public enum TARGET_TYPE
     {
         PLAYER,
@@ -39,8 +45,10 @@ public class Enemy : MonoBehaviour {
     private int m_maxHP = 0;
     [SerializeField]
     private int m_damage = 2;
+    public int m_Damage { get { return m_damage; } private set { m_damage = value; } }
     [SerializeField]
     private float m_speed = 4;
+    public float m_Speed { get { return m_speed; } private set { m_speed = value; } }
     [SerializeField]
     private float m_mutekitime = 3.0f;
     [SerializeField]
@@ -62,8 +70,6 @@ public class Enemy : MonoBehaviour {
     private Vector2 m_moveDirection = Vector2.zero;
     [SerializeField]
     private float m_moveDistance = 3.0f;
-    [SerializeField]
-    private float m_moveSpeed = 3.0f;
 
     // çUåÇä÷åW
     [SerializeField]
@@ -101,6 +107,9 @@ public class Enemy : MonoBehaviour {
     [SerializeField]
     private SpriteRenderer m_rangeRenderere = null;
     private int m_rangeLayerNo = -1;
+
+    [SerializeField]
+    private int m_levelPoint = 1;
 
 
     private void Awake()
@@ -676,10 +685,11 @@ public class Enemy : MonoBehaviour {
         }
         else
         {
-            if (m_type == ENEMY_TYPE.BOSS_B)
+            if (m_type == ENEMY_TYPE.BOSS_ANTS)
             {
                 m_enemyController.StartCoroutine(m_enemyController.ChangeScene());
             }
+            m_minionController.AddExperiencePoint(m_levelPoint);
             gameObject.SetActive(false);
             m_hpui.SetActive(false);
             // É^Å[ÉQÉbÉgÇïœçX
@@ -697,8 +707,6 @@ public class Enemy : MonoBehaviour {
         }
 
     }
-
-
 
 }
 

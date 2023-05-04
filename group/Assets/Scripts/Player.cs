@@ -38,6 +38,12 @@ public class Player : MonoBehaviour
     private bool isCanAttack = true;    // 攻撃できるかどうかのフラグ
     public Vector2 m_attackDir { get; private set; }
 
+    // レベルアップ関係
+    private bool m_isLevelUp = false;
+    [SerializeField]
+    private LevelUpUI m_levelUpUI = null;
+    private bool m_canLevelUp=false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -49,40 +55,99 @@ public class Player : MonoBehaviour
 
     private void OnMove(InputValue value)
     {
-        // MoveActionの入力値を取得
-        m_dir = value.Get<Vector2>();
-        if(m_dir != Vector2.zero)
+        if (m_isLevelUp)
         {
-            m_attackDir = m_dir;
         }
         else
         {
-            m_attackDir = Vector2.up;
+            m_dir = value.Get<Vector2>();
+            // MoveActionの入力値を取得
+            if (m_dir != Vector2.zero)
+            {
+                m_attackDir = m_dir;
+            }
+            else
+            {
+                m_attackDir = Vector2.up;
+            }
         }
     }
 
     private void OnFOLLOW()
     {
-        m_minionController.ChangeMode(Minion.MINION_MODE.FOLLOW);
+        if (m_isLevelUp)
+        {
+            m_levelUpUI.Decide();
+        }
+        else
+                {
+            m_minionController.ChangeMode(Minion.MINION_MODE.FOLLOW);
+        }
     }
 
     private void OnATTACK()
     {
-        m_minionController.ChangeMode(Minion.MINION_MODE.MOVE_ENEMY);
-
+        if (m_isLevelUp)
+        {
+            m_isLevelUp = false;
+            m_levelUpUI.Uninit();
+        }
+        else
+        {
+            m_minionController.ChangeMode(Minion.MINION_MODE.MOVE_ENEMY);
+        }
     }
 
     private void OnESCAPE()
     {
-        m_minionController.ChangeMode(Minion.MINION_MODE.ESCAPE);
+        if(m_isLevelUp)
+        {
+
+        }
+        else
+        {
+            m_minionController.ChangeMode(Minion.MINION_MODE.ESCAPE);
+        }
+    }
+
+    private void OnUI_OPEN()
+    {
+        if (m_canLevelUp&&!m_isLevelUp)
+        {
+            m_isLevelUp = true;
+            m_levelUpUI.Init();
+            m_dir = Vector2.zero;
+        }
+        else if (m_isLevelUp)
+        {
+            m_isLevelUp = false;
+            m_levelUpUI.Uninit();
+        }
+
+    }
+
+    private void OnUI_UP()
+    {
+        if (m_isLevelUp)
+        {
+            m_levelUpUI.Move_Up();
+        }
+    }
+
+    private void OnUI_DOWN()
+    {
+        if (m_isLevelUp)
+        {
+            m_levelUpUI.Move_Down();
+        }
     }
 
     private void OnPLAYER_ATTACK()
     {
-        if(isCanAttack)
-        {
-            StartCoroutine(Attack());
-        }
+        //if(isCanAttack)
+        //{
+        //    StartCoroutine(Attack());
+        //}
     }
 
     IEnumerator Attack()
@@ -151,7 +216,15 @@ public class Player : MonoBehaviour
             m_minionController.RevivalMinion(collision.transform.position);
             // 敵も復活
             m_enemyController.ActiveAll();
+            m_canLevelUp = true;
+        }
+    }
 
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if(collision.gameObject.tag == "Home")
+        {
+            m_canLevelUp = false;
         }
     }
 }

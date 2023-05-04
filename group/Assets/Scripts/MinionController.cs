@@ -27,6 +27,18 @@ public class MinionController : MonoBehaviour
     private GameObject m_hpui= null;
     [SerializeField]
     private int m_minionMax = 30;
+    [SerializeField]
+    private GameObject m_hpUIParent = null;
+
+    // レベルアップ系
+    [SerializeField]
+    private int m_level = 0;
+    public int m_Level { get { return m_level; } private set { m_level = value; } }
+    [SerializeField]
+    private int m_levelUpNum = 5;
+    [SerializeField]
+    private int m_experiencePoint = 0;
+    public int m_LevelUpPoint = 0;
     // Start is called before the first frame update
     void Start()
     {
@@ -39,7 +51,7 @@ public class MinionController : MonoBehaviour
             // minion.transform.eulerAngles = new Vector3(0.0f, 0.0f, angleZ);
             m_minions.Add(minion.GetComponent<MinionA>());
             // ui作成
-            var hpui = Instantiate(m_hpui, m_canvas.transform);
+            var hpui = Instantiate(m_hpui, m_hpUIParent.transform);
             minion.GetComponent<MinionA>().m_hpui = hpui;
             hpui.GetComponent<MinionHPUI>().m_minion = minion.GetComponent<MinionA>();
         }
@@ -55,7 +67,7 @@ public class MinionController : MonoBehaviour
 
     public void CreateMinion(Enemy enemy)
     {
-        if (enemy.m_type == Enemy.ENEMY_TYPE.ENEMY_A)
+        if (enemy.m_type == Enemy.ENEMY_TYPE.LADYBIRD)
         {
             // ミニオンにする
             var minionObj = Instantiate(m_minionA);
@@ -69,11 +81,11 @@ public class MinionController : MonoBehaviour
                 minion.m_target = m_enemyController.m_targetEnemy.gameObject;
             }
             // ui作成
-            var hpui = Instantiate(m_hpui, m_canvas.transform);
+            var hpui = Instantiate(m_hpui, m_hpUIParent.transform);
             minion.m_hpui = hpui;
             hpui.GetComponent<MinionHPUI>().m_minion = minion;
         }
-        else if(enemy.m_type==Enemy.ENEMY_TYPE.ENEMY_B)
+        else if(enemy.m_type==Enemy.ENEMY_TYPE.ANTS)
         {
             // ミニオンにする
             var minionObj = Instantiate(m_minionB);
@@ -87,7 +99,7 @@ public class MinionController : MonoBehaviour
                 minion.m_target = m_enemyController.m_targetEnemy.gameObject;
             }
             // ui作成
-            var hpui = Instantiate(m_hpui, m_canvas.transform);
+            var hpui = Instantiate(m_hpui, m_hpUIParent.transform);
             minion.m_hpui = hpui;
             hpui.GetComponent<MinionHPUI>().m_minion = minion;
         }
@@ -188,5 +200,30 @@ public class MinionController : MonoBehaviour
         }
         yield return new WaitForSeconds(2.0f);
         SceneManager.LoadScene("GameOver");
+    }
+
+    public void AddExperiencePoint(int point)
+    {
+        m_experiencePoint += point;
+        if (m_experiencePoint >= m_levelUpNum)
+        {
+            // m_level++;
+            m_LevelUpPoint++;
+            m_experiencePoint -= m_levelUpNum;
+            //// レベルアップごとに必要経験値が変わるならリストを使用
+            //m_minions[0].LevelUp();
+        }
+    }
+
+    public void LevelUp(Minion.MINION_TYPE type)
+    {
+        m_LevelUpPoint--;
+        foreach(var minion in m_Minions)
+        {
+            if(minion.m_type== type)
+            {
+                minion.LevelUp();
+            }
+        }
     }
 }

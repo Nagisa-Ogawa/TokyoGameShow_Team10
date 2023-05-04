@@ -15,6 +15,7 @@ public class EnemyController : MonoBehaviour
     private GameObject canvas = null;
     // “G‚ÌƒŠƒXƒg
     private List<Enemy> m_enemyList =new List<Enemy>();
+    public List<Enemy> m_EnemyList {  get { return m_enemyList; } private set { m_enemyList = value; } }
     private List<GameObject> m_enemyUIList = new List<GameObject>();
     [SerializeField]
     private Player m_player = null;
@@ -25,6 +26,8 @@ public class EnemyController : MonoBehaviour
     private int m_nowEnemyCount = 0;
     [SerializeField]
     private float m_attackDistance = 5.0f;
+    [SerializeField]
+    private GameObject m_hpUIParent = null;
 
 
     // Start is called before the first frame update
@@ -35,7 +38,7 @@ public class EnemyController : MonoBehaviour
         foreach (GameObject enemy in enemies)
         {
             m_enemyList.Add(enemy.GetComponent<Enemy>());
-            var hpui = Instantiate(m_HPUI, canvas.transform);
+            var hpui = Instantiate(m_HPUI, m_hpUIParent.transform);
             m_enemyUIList.Add(hpui);
             hpui.GetComponent<EnemyHPUI>().m_enemy = enemy.GetComponent<Enemy>();
             enemy.GetComponent<Enemy>().m_hpui = hpui;
