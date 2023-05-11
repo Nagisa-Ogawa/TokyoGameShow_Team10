@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
-using static Enemy;
 
 public class Minion:MonoBehaviour
 {
@@ -432,9 +433,20 @@ public class Minion:MonoBehaviour
         Debug.Log("レベルアップ");
         m_level++;
         m_maxHP += m_addHp;
+        m_HP = m_maxHP;
         m_damage += m_addDamage;
         m_speed += m_addSpeed;
+        m_hpui.GetComponent<MinionHPUI>().ChangeMax(m_maxHP);
         // m_chaseSpeed += m_addSpeed;
+    }
+
+    public void SetStatus(Minion minion)
+    {
+        m_level = minion.m_level;
+        m_maxHP = minion.m_maxHP;
+        m_HP = minion.m_maxHP;
+        m_speed = minion.m_speed;
+        m_damage= minion.m_damage;
     }
 
 }

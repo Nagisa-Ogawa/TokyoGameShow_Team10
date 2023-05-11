@@ -15,7 +15,7 @@ public class MinionHPUI : MonoBehaviour
 
     private void Start()
     {
-        m_slider.maxValue = m_minion.m_HP;
+        m_slider.maxValue = m_minion.m_maxHP;
         m_rect = GetComponent<RectTransform>();
     }
     // Update is called once per frame
@@ -24,5 +24,10 @@ public class MinionHPUI : MonoBehaviour
         m_slider.value = m_minion.m_HP;
         m_rect.transform.position = Camera.main.WorldToScreenPoint(
             new Vector3(m_minion.transform.position.x, m_minion.transform.position.y + m_offsetY, 0.0f));
+    }
+
+    public void ChangeMax(int hp)
+    {
+        m_slider.maxValue = hp;
     }
 }

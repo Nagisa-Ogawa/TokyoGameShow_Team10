@@ -42,7 +42,6 @@ public class EnemyRangeAttack : MonoBehaviour
         // Debug.Log(collision.name + "と当たった");
         // まだ一度も当たってないなら
         if ((collision.tag=="Minion"||collision.tag=="Player")&&
-                m_enemy.m_mode == Enemy.ENEMY_MODE.RANGE_ATTACK&&
                     m_hitObjList.Contains(collision.gameObject)==false)
         {
             // ダメージ判定

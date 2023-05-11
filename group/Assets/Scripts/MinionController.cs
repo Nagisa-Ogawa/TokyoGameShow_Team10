@@ -72,7 +72,6 @@ public class MinionController : MonoBehaviour
             // ミニオンにする
             var minionObj = Instantiate(m_minionA);
             var minion = minionObj.GetComponent<Minion>();
-            m_Minions.Add(minion);
             minion.transform.position = enemy.transform.position;
             minion.m_mode = m_mode;
             if (m_enemyController.m_targetEnemy != null)
@@ -80,6 +79,8 @@ public class MinionController : MonoBehaviour
                 minion.m_targetEnemy = m_enemyController.m_targetEnemy;
                 minion.m_target = m_enemyController.m_targetEnemy.gameObject;
             }
+            SetStatus(minion);
+            m_Minions.Add(minion);
             // ui作成
             var hpui = Instantiate(m_hpui, m_hpUIParent.transform);
             minion.m_hpui = hpui;
@@ -90,7 +91,6 @@ public class MinionController : MonoBehaviour
             // ミニオンにする
             var minionObj = Instantiate(m_minionB);
             var minion = minionObj.GetComponent<Minion>();
-            m_Minions.Add(minion);
             minion.transform.position = enemy.transform.position;
             minion.m_mode = m_mode;
             if(m_enemyController.m_targetEnemy != null)
@@ -98,6 +98,8 @@ public class MinionController : MonoBehaviour
                 minion.m_targetEnemy = m_enemyController.m_targetEnemy;
                 minion.m_target = m_enemyController.m_targetEnemy.gameObject;
             }
+            SetStatus(minion);
+            m_Minions.Add(minion);
             // ui作成
             var hpui = Instantiate(m_hpui, m_hpUIParent.transform);
             minion.m_hpui = hpui;
@@ -224,6 +226,23 @@ public class MinionController : MonoBehaviour
             {
                 minion.LevelUp();
             }
+        }
+    }
+
+    public void SetStatus(Minion minion)
+    {
+        Minion target = null;
+        foreach(var m in m_Minions)
+        {
+            if(minion.m_type==m.m_type)
+            {
+                target = m;
+                break;
+            }
+        }
+        if(target != null)
+        {
+            minion.SetStatus(target);
         }
     }
 }

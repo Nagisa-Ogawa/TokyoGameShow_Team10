@@ -27,6 +27,7 @@ public class Enemy : MonoBehaviour {
         DRAGONFLY,
         MANTIS,
         BOSS_ANTS,
+        BOSS_Mantis,
     }
 
     public enum TARGET_TYPE
@@ -37,49 +38,49 @@ public class Enemy : MonoBehaviour {
     public ENEMY_MODE m_mode;
     public ENEMY_TYPE m_type;
     public GameObject m_hpui;
-    private MinionController m_minionController = null;
-    private EnemyController m_enemyController = null;
+    protected MinionController m_minionController = null;
+    protected EnemyController m_enemyController = null;
     [SerializeField]
-    private Rigidbody2D m_rigidbody = null;
+    protected Rigidbody2D m_rigidbody = null;
     public int m_HP = 3;
-    private int m_maxHP = 0;
+    protected int m_maxHP = 0;
     [SerializeField]
-    private int m_damage = 2;
+    protected int m_damage = 2;
     public int m_Damage { get { return m_damage; } private set { m_damage = value; } }
     [SerializeField]
-    private float m_speed = 4;
+    protected float m_speed = 4;
     public float m_Speed { get { return m_speed; } private set { m_speed = value; } }
     [SerializeField]
-    private float m_mutekitime = 3.0f;
+    protected float m_mutekitime = 3.0f;
     [SerializeField]
     public bool m_mutekiFlag = false;
     [SerializeField]
-    private float m_territoryDistance = 6.0f;
+    protected float m_territoryDistance = 6.0f;
     [SerializeField]
-    private float m_stopAttackDistance = 2.0f;
+    protected float m_stopAttackDistance = 2.0f;
     public GameObject m_target;
     public Minion m_targetMinion;
-    private TARGET_TYPE m_targetType;
+    protected TARGET_TYPE m_targetType;
     public Vector3 m_territoryPos { get; set; }
-    private Vector2 m_vec = Vector2.zero;
-    private bool m_isArrive = false;
-    private Coroutine m_coroutine;
+    protected Vector2 m_vec = Vector2.zero;
+    protected bool m_isArrive = false;
+    protected Coroutine m_coroutine;
 
     // à⁄ìÆä÷åW
     [SerializeField]
-    private Vector2 m_moveDirection = Vector2.zero;
+    protected Vector2 m_moveDirection = Vector2.zero;
     [SerializeField]
-    private float m_moveDistance = 3.0f;
+    protected float m_moveDistance = 3.0f;
 
     // çUåÇä÷åW
     [SerializeField]
-    private EnemyAttackCollider m_enemyAttack = null;
+    protected EnemyAttackCollider m_enemyAttack = null;
     [SerializeField]
-    private SpriteRenderer m_renderer = null;
+    protected SpriteRenderer m_renderer = null;
     [SerializeField]
-    private float m_addAlpha = 0.02f;
+    protected float m_addAlpha = 0.02f;
     [SerializeField]
-    private float m_chaseSpeed = 4.0f;
+    protected float m_chaseSpeed = 4.0f;
     public float m_attackTime = 2.0f;
     public float m_nowTime = 0.0f;
     public float m_afterAttackTime = 1.0f;
@@ -88,28 +89,28 @@ public class Enemy : MonoBehaviour {
     public Color m_color;
     public bool m_canAttack = true;
     [SerializeField]
-    private bool isRange = true;
+    protected bool isRange = true;
 
     // îÕàÕçUåÇä÷åW
     [SerializeField]
-    private EnemyRangeAttack m_rangeAttack = null;
+    protected EnemyRangeAttack m_rangeAttack = null;
     [SerializeField]
-    private float m_addAlphaRange = 0.02f;
+    protected float m_addAlphaRange = 0.02f;
     [SerializeField]
-    private float m_attackTimeRange = 2.0f;
+    protected float m_attackTimeRange = 2.0f;
     [SerializeField]
-    private float m_rangeAttackCoolDown=3.0f;
+    protected float m_rangeAttackCoolDown=3.0f;
     [SerializeField]
-    private float m_rangeAttackTime = 2.0f;
+    protected float m_rangeAttackTime = 2.0f;
     [SerializeField]
-    private float m_rangeAfterAttackTime = 1.0f;
-    private Color m_rangeColor;
+    protected float m_rangeAfterAttackTime = 1.0f;
+    protected Color m_rangeColor;
     [SerializeField]
-    private SpriteRenderer m_rangeRenderere = null;
-    private int m_rangeLayerNo = -1;
+    protected SpriteRenderer m_rangeRenderere = null;
+    protected int m_rangeLayerNo = -1;
 
     [SerializeField]
-    private int m_levelPoint = 1;
+    protected int m_levelPoint = 1;
 
 
     private void Awake()
@@ -135,7 +136,6 @@ public class Enemy : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-        // Debug.Log(m_mode);
         switch(m_mode)
         {
             case ENEMY_MODE.WAIT:
@@ -452,7 +452,7 @@ public class Enemy : MonoBehaviour {
         }
     }
 
-    public void ResetEnemy()
+    public virtual void ResetEnemy()
     {
         // çUåÇÇíÜé~Ç∑ÇÈ
         m_mode = ENEMY_MODE.MOVE_TERRITORY;
@@ -485,7 +485,7 @@ public class Enemy : MonoBehaviour {
         m_coroutine = StartCoroutine(ChargeEnemyAttack());
     }
 
-    public void StartRangeAttack()
+    public virtual void StartRangeAttack()
     {
         m_canAttack = false;
         m_color = m_renderer.material.color;
@@ -513,7 +513,7 @@ public class Enemy : MonoBehaviour {
                 m_renderer.material.color = color;
                 m_nowTime = 0.0f;
                 // çUåÇÉRÉãÅ[É`ÉìÇ÷
-                m_mode = ENEMY_MODE.MOVE_ATTACK;
+                m_mode = ENEMY_MODE.ATTACK;
                 m_coroutine = StartCoroutine(EnemyAttack());
                 yield break;
             }
@@ -569,7 +569,13 @@ public class Enemy : MonoBehaviour {
         m_rigidbody.bodyType = RigidbodyType2D.Dynamic;
         m_renderer.material.color = m_color;
         m_attackedTime = Time.time;
-        m_target = null;
+        if (m_targetType == TARGET_TYPE.MINION)
+        {
+            if (m_target.GetComponent<Minion>().m_mode == Minion.MINION_MODE.DEAD)
+            {
+                m_target = null;
+            }
+        }
         yield break;
     }
 
@@ -620,7 +626,13 @@ public class Enemy : MonoBehaviour {
         m_rangeAttack.transform.localPosition = Vector3.zero;
 
         m_attackedTime = Time.time;
-        m_target = null;
+        if (m_targetType == TARGET_TYPE.MINION)
+        {
+            if (m_target.GetComponent<Minion>().m_mode == Minion.MINION_MODE.DEAD)
+            {
+                m_target = null;
+            }
+        }
         yield break;
     }
 
