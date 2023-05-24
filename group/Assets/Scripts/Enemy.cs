@@ -27,7 +27,7 @@ public class Enemy : MonoBehaviour {
         DRAGONFLY,
         MANTIS,
         BOSS_ANTS,
-        BOSS_Mantis,
+        BOSS_MANTIS,
     }
 
     public enum TARGET_TYPE
@@ -44,6 +44,7 @@ public class Enemy : MonoBehaviour {
     protected Rigidbody2D m_rigidbody = null;
     public int m_HP = 3;
     protected int m_maxHP = 0;
+    public int m_MaxHP { get { return m_maxHP; } private set { m_maxHP = value; } }
     [SerializeField]
     protected int m_damage = 2;
     public int m_Damage { get { return m_damage; } private set { m_damage = value; } }
@@ -111,6 +112,7 @@ public class Enemy : MonoBehaviour {
 
     [SerializeField]
     protected int m_levelPoint = 1;
+    public bool isReviv = true;
 
 
     private void Awake()
@@ -122,10 +124,26 @@ public class Enemy : MonoBehaviour {
     void Start()
     {
         m_mode = ENEMY_MODE.WAIT;
+        m_color=m_renderer.color;
         m_rangeColor = m_rangeRenderere.material.color;
         Color color = m_rangeRenderere.material.color;
         color.a = 0.0f;
         m_rangeRenderere.material.color= color;
+        m_rangeLayerNo = m_rangeAttack.gameObject.layer;
+        m_rangeAttack.gameObject.layer = 12;
+        m_rangeAttack.gameObject.SetActive(false);
+        m_territoryPos = gameObject.transform.position;
+        m_maxHP = m_HP;
+    }
+
+    public void Init()
+    {
+        m_mode = ENEMY_MODE.WAIT;
+        m_color = m_renderer.color;
+        m_rangeColor = m_rangeRenderere.material.color;
+        Color color = m_rangeRenderere.material.color;
+        color.a = 0.0f;
+        m_rangeRenderere.material.color = color;
         m_rangeLayerNo = m_rangeAttack.gameObject.layer;
         m_rangeAttack.gameObject.layer = 12;
         m_rangeAttack.gameObject.SetActive(false);
@@ -344,7 +362,7 @@ public class Enemy : MonoBehaviour {
         m_vec = m_territoryPos - transform.position;
     }
 
-    public void UpdateMove()
+    public virtual void UpdateMove()
     {
         if(m_vec==Vector2.zero) return;
         Vector2 m_velocity = Vector2.zero;
@@ -463,7 +481,8 @@ public class Enemy : MonoBehaviour {
         }
         m_nowTime = 0.0f;
         m_renderer.material.color = m_color;
-        m_vec = Vector2.zero; Color color = m_rangeRenderere.material.color;
+        m_vec = Vector2.zero; 
+        Color color = m_rangeRenderere.material.color;
         color.a = 0.0f;
         m_rangeRenderere.material.color = color;
         m_rangeAttack.transform.eulerAngles = Vector3.zero;
@@ -471,7 +490,7 @@ public class Enemy : MonoBehaviour {
         m_rangeAttack.gameObject.layer = 12;
     }
 
-    public void RevivalEnemy()
+    public virtual void RevivalEnemy()
     {
         m_HP = m_maxHP;
         transform.position = m_territoryPos;
@@ -688,7 +707,7 @@ public class Enemy : MonoBehaviour {
 
 
 
-    public void Damage(int damage)
+    public virtual void Damage(int damage)
     {
         m_HP -= damage;
         if(m_HP>0)

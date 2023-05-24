@@ -45,7 +45,7 @@ public class MinionController : MonoBehaviour
         for(int i = 0; i < m_minionMax; i++)
         {
             var minion = Instantiate(m_minionA);
-            Vector3 pos = new Vector3(Random.Range(-5.0f, 5.0f), Random.Range(-5.0f, 5.0f), 0.0f);
+            Vector3 pos = new Vector3(Random.Range(-3.0f, 3.0f), Random.Range(-3.0f, 3.0f), 0.0f)+m_player.transform.position;
             // float angleZ = Random.Range(0, 360.0f);
             minion.transform.position = pos;
             // minion.transform.eulerAngles = new Vector3(0.0f, 0.0f, angleZ);

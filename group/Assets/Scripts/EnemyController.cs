@@ -13,6 +13,10 @@ public class EnemyController : MonoBehaviour
     private GameObject m_HPUI = null;
     [SerializeField]
     private GameObject canvas = null;
+    [SerializeField]
+    private Transform m_Parents = null;
+    [SerializeField]
+    private List<GameObject> m_enemyPrefabs = new List<GameObject>();
     // “G‚ÌƒŠƒXƒg
     private List<Enemy> m_enemyList =new List<Enemy>();
     public List<Enemy> m_EnemyList {  get { return m_enemyList; } private set { m_enemyList = value; } }
@@ -52,6 +56,24 @@ public class EnemyController : MonoBehaviour
         //    enemy.transform.eulerAngles = new Vector3(0.0f, 0.0f, angleZ);
         //    m_enemyList.Add(enemy.GetComponent<Enemy>());
         //}
+    }
+
+    public List<GameObject> CreateEnemyBoss(int enemyNo,int enemyCount)
+    {
+        var enemies=new List<GameObject>();
+        for(int i=0;i<enemyCount; i++)
+        {
+            var enemyObj = Instantiate(m_enemyPrefabs[enemyNo]);
+            var enemy=enemyObj.GetComponent<Enemy>();
+            var hpui = Instantiate(m_HPUI, m_hpUIParent.transform);
+            hpui.GetComponent<EnemyHPUI>().m_enemy = enemy.GetComponent<Enemy>();
+            enemy.GetComponent<Enemy>().m_hpui = hpui;
+            enemy.isReviv = false;
+            m_enemyList.Add(enemy);
+            m_enemyUIList.Add(hpui);
+            enemies.Add(enemyObj);
+        }
+        return enemies;
     }
 
     public void FindTargetEnemy()
@@ -94,17 +116,11 @@ public class EnemyController : MonoBehaviour
     {
         foreach(var enemy in m_enemyList)
         {
-            if (enemy.m_mode == Enemy.ENEMY_MODE.DEAD)
+            if (enemy.m_mode == Enemy.ENEMY_MODE.DEAD&&enemy.isReviv)
             {
                 enemy.gameObject.SetActive(true);
                 enemy.RevivalEnemy();
-            }
-        }
-        foreach (var eUI in m_enemyUIList)
-        {
-            if (eUI.activeSelf == false)
-            {
-                eUI.SetActive(true);
+                enemy.m_hpui.SetActive(true);
             }
         }
     }

@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
+using static UnityEditor.ShaderData;
 #if UNITY_EDITOR
 [CustomEditor(typeof(Enemy))]
 #endif
@@ -11,40 +13,68 @@ public class Boss_Mantis : Enemy
     public enum BOSS_MANTIS_MODE {
         WAIT,
         MOVE_ATTACK,
-        WAIT_RANGE_ATTACKA_COOLDWON,
-        WAIT_RANGE_ATTACKB_COOLDOWN,
-        SETUP_RANGE_ATTACKA,
-        SETUP_RANGE_ATTACKB,
-        RANGE_ATTACKA,
-        RANGE_ATTACKB,
-        AFTER_ATTACK,
+        WAIT_RANGE_ATTACK_COOLDWON,
         CREATE_ENEMY,
+        SETUP_RANGE_ATTACK,
+        RANGE_ATTACK,
+        AFTER_ATTACK,
         MOVE_TERRITORY,
         DEAD,
     }
 
-    public new BOSS_MANTIS_MODE m_mode { get; private set; }
-    
+
+    public BOSS_MANTIS_MODE m_mantisMode { get; private set; }
+
+    // 範囲攻撃関係
+    [SerializeField]
+    protected EnemyRangeAttack m_rangeAttackB = null;
+    protected Color m_rangeColorB;
+    [SerializeField]
+    protected SpriteRenderer m_rangeRenderereB = null;
+    int m_choice = 0;
+
+    // 敵作成関係
+    [SerializeField]
+    private int m_createEnemyNum = 4;
+    private List<GameObject> m_enemies = new List<GameObject>();
+
     // Start is called before the first frame update
     void Start()
     {
-        m_mode = BOSS_MANTIS_MODE.WAIT;
+        m_mantisMode = BOSS_MANTIS_MODE.WAIT;
+        m_type = Enemy.ENEMY_TYPE.BOSS_MANTIS;
         m_rangeColor = m_rangeRenderere.material.color;
+        m_rangeColorB = m_rangeRenderereB.material.color;
+        m_color=m_renderer.material.color;
         Color color = m_rangeRenderere.material.color;
         color.a = 0.0f;
         m_rangeRenderere.material.color = color;
+        color = m_rangeRenderereB.material.color;
+        color.a = 0.0f;
+        m_rangeRenderereB.material.color = color;
         m_rangeLayerNo = m_rangeAttack.gameObject.layer;
         m_rangeAttack.gameObject.layer = 12;
         m_rangeAttack.gameObject.SetActive(false);
+        m_rangeAttackB.gameObject.layer=12;
+        m_rangeAttackB.gameObject.SetActive(false);
         m_territoryPos = gameObject.transform.position;
         m_maxHP = m_HP;
+        // 敵を事前に作成
+        var enemies = m_enemyController.CreateEnemyBoss(0, m_createEnemyNum);
+        foreach(var enemy in enemies)
+        {
+            m_enemies.Add(enemy);
+            enemy.GetComponent<Enemy>().Init();
+            enemy.gameObject.SetActive(false);
+            enemy.GetComponent<Enemy>().m_hpui.gameObject.SetActive(false);
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(m_mode);
-        switch (m_mode)
+        Debug.Log(m_mantisMode);
+        switch (m_mantisMode)
         {
             case BOSS_MANTIS_MODE.WAIT:
                 // テリトリーの外へ出たらテリトリーへ戻る
@@ -60,12 +90,12 @@ public class Boss_Mantis : Enemy
                     // 敵がテリトリーに侵入したら迎撃開始
                     if (FindTarget())
                     {
-                        m_mode = BOSS_MANTIS_MODE.MOVE_ATTACK;
+                        m_mantisMode = BOSS_MANTIS_MODE.MOVE_ATTACK;
                     }
                 }
                 else
                 {
-                    m_mode = BOSS_MANTIS_MODE.MOVE_TERRITORY;
+                    m_mantisMode = BOSS_MANTIS_MODE.MOVE_TERRITORY;
                 }
                 break;
             case BOSS_MANTIS_MODE.MOVE_ATTACK:
@@ -91,7 +121,23 @@ public class Boss_Mantis : Enemy
 
                     m_rigidbody.bodyType = RigidbodyType2D.Kinematic;
                     m_rigidbody.velocity = Vector3.zero;
-                        m_mode = BOSS_MANTIS_MODE.WAIT_RANGE_ATTACKA_COOLDWON;
+                    m_choice = Random.Range(0, 3);
+                    if (m_choice == 2 && CheckDeadAllEnemy() == false)
+                    {
+                        m_choice = Random.Range(0, 2);
+                    }
+                    switch (m_choice)
+                    {
+                        case 0:
+                            m_mantisMode = BOSS_MANTIS_MODE.WAIT_RANGE_ATTACK_COOLDWON;
+                            break;
+                        case 1:
+                            m_mantisMode = BOSS_MANTIS_MODE.WAIT_RANGE_ATTACK_COOLDWON;
+                            break;
+                        case 2:
+                            m_mantisMode = BOSS_MANTIS_MODE.CREATE_ENEMY;
+                            break;
+                    }
                 }
                 else
                 {
@@ -103,34 +149,28 @@ public class Boss_Mantis : Enemy
                     }
                     else
                     {
-                        m_mode = BOSS_MANTIS_MODE.MOVE_TERRITORY;
+                        m_mantisMode = BOSS_MANTIS_MODE.MOVE_TERRITORY;
                     }
                 }
                 break;
-            case BOSS_MANTIS_MODE.WAIT_RANGE_ATTACKA_COOLDWON:
+            case BOSS_MANTIS_MODE.WAIT_RANGE_ATTACK_COOLDWON:
                 // 攻撃可能なら攻撃へ
                 if (CheckCanRangeAttack())
                 {
-                    m_mode = BOSS_MANTIS_MODE.SETUP_RANGE_ATTACKA;
-                    StartRangeAttack();
+                    m_mantisMode = BOSS_MANTIS_MODE.SETUP_RANGE_ATTACK;
+                    if (m_choice == 0)
+                    {
+                        StartRangeAttack(m_rangeAttack, m_rangeRenderere, m_rangeColor);
+                    }
+                    else
+                    {
+                        StartRangeAttack(m_rangeAttackB, m_rangeRenderereB, m_rangeColorB);
+                    }
                 }
                 break;
-            case BOSS_MANTIS_MODE.WAIT_RANGE_ATTACKB_COOLDOWN:
-                // 攻撃可能なら攻撃へ
-                if (CheckCanRangeAttack())
-                {
-                    m_mode = BOSS_MANTIS_MODE.SETUP_RANGE_ATTACKB;
-                    StartRangeAttack();
-                }
+            case BOSS_MANTIS_MODE.SETUP_RANGE_ATTACK:
                 break;
-            case BOSS_MANTIS_MODE.SETUP_RANGE_ATTACKA:
-                break;
-            case BOSS_MANTIS_MODE.SETUP_RANGE_ATTACKB:
-                break;
-            case BOSS_MANTIS_MODE.RANGE_ATTACKA:
-                break;
-            case BOSS_MANTIS_MODE.RANGE_ATTACKB:
-
+            case BOSS_MANTIS_MODE.RANGE_ATTACK:
                 break;
             case BOSS_MANTIS_MODE.MOVE_TERRITORY:
                 // 攻撃検知エリア内にミニオンがいるなら
@@ -148,30 +188,46 @@ public class Boss_Mantis : Enemy
                     {
                         m_targetType = TARGET_TYPE.PLAYER;
                     }
-
-                    m_rigidbody.bodyType = RigidbodyType2D.Kinematic;
-                    m_rigidbody.velocity = Vector3.zero;
-                    // m_mode = ENEMY_MODE.WAIT_ATTACK_COOLDWON;
-                    m_mode = BOSS_MANTIS_MODE.WAIT_RANGE_ATTACKA_COOLDWON;
+                    m_mantisMode = BOSS_MANTIS_MODE.MOVE_ATTACK;
                 }
                 else
                 {
                     // テリトリーに侵入したら迎撃開始
                     if (FindTarget())
                     {
-                        m_mode = BOSS_MANTIS_MODE.MOVE_ATTACK;
+                        m_mantisMode = BOSS_MANTIS_MODE.MOVE_ATTACK;
                     }
                     else
                     {
                         if ((transform.position - m_territoryPos).magnitude <= 0.1f)
                         {
                             transform.position = m_territoryPos;
-                            m_mode = BOSS_MANTIS_MODE.WAIT;
+                            m_mantisMode = BOSS_MANTIS_MODE.WAIT;
                             m_rigidbody.velocity = Vector2.zero;
                         }
                         UpdateMoveToTerritory();
                     }
                 }
+                break;
+            case BOSS_MANTIS_MODE.CREATE_ENEMY:
+                List<Vector3> poss = new List<Vector3>();
+                float offset = 3.0f;
+                poss.Add(transform.position + new Vector3( offset,  offset, 0));
+                poss.Add(transform.position + new Vector3(-offset,  offset, 0));
+                poss.Add(transform.position + new Vector3( offset, -offset, 0));
+                poss.Add(transform.position + new Vector3(-offset, -offset, 0));
+                // 敵を生成
+                for(int i=0;i<m_createEnemyNum;i++)
+                {
+                    m_enemies[i].transform.position = poss[i];
+                    m_enemies[i].GetComponent<Enemy>().m_territoryPos = poss[i];
+                    m_enemies[i].GetComponent<Enemy>().RevivalEnemy();
+                    m_enemies[i].SetActive(true);
+                    m_enemies[i].GetComponent<Enemy>().m_hpui.gameObject.SetActive(true);
+                }
+                m_coroutine = StartCoroutine(Wait());
+                break;
+            case BOSS_MANTIS_MODE.AFTER_ATTACK:
                 break;
             case BOSS_MANTIS_MODE.DEAD:
                 break;
@@ -180,7 +236,7 @@ public class Boss_Mantis : Enemy
 
     private void FixedUpdate()
     {
-        switch (m_mode)
+        switch (m_mantisMode)
         {
             case BOSS_MANTIS_MODE.WAIT:
                 //var rot = Quaternion.FromToRotation(Vector3.up, m_moveDirection);
@@ -198,74 +254,139 @@ public class Boss_Mantis : Enemy
         }
     }
 
-    public override void StartRangeAttack()
+    public override void UpdateMove()
+    {
+        if (m_vec == Vector2.zero) return;
+        Vector2 m_velocity = Vector2.zero;
+        m_velocity = m_vec;
+        Vector3 dir = m_velocity.normalized;
+        if (m_mantisMode == BOSS_MANTIS_MODE.MOVE_TERRITORY)
+        {
+            if ((transform.position - m_territoryPos).magnitude <= m_speed)
+            {
+                m_velocity = (transform.position - m_territoryPos).magnitude * dir;
+            }
+            else
+            {
+                m_velocity = m_speed * dir;
+            }
+        }
+        else
+        {
+            m_velocity = m_chaseSpeed * dir;
+        }
+        //var rot = Quaternion.FromToRotation(Vector3.up, m_velocity);
+        //transform.rotation = rot;
+        m_rigidbody.velocity = m_velocity;
+        // m_rigidbody.MovePosition(transform.position+(Vector3)m_velocity*Time.deltaTime);
+        m_vec = Vector2.zero;
+    }
+
+
+    public void StartRangeAttack(EnemyRangeAttack rangeAttack,SpriteRenderer renderer,Color color)
     {
         m_canAttack = false;
         m_color = m_renderer.material.color;
-        m_rangeRenderere.material.color = m_rangeColor;
+        renderer.material.color = color;
         // m_rangeAttack.gameObject.GetComponent<BoxCollider2D>().enabled = false;
-        m_rangeAttack.gameObject.SetActive(true);
+        rangeAttack.gameObject.SetActive(true);
         // 範囲攻撃用オブジェクトを敵の方向へ調整
-        m_rangeAttack.SetRange(m_target);
-        m_coroutine = StartCoroutine(ChargeEnemyRangeAttack());
+        rangeAttack.SetRange(m_target);
+        m_coroutine = StartCoroutine(ChargeEnemyRangeAttack(rangeAttack,renderer));
     }
 
-    private IEnumerator ChargeEnemyRangeAttack()
+    private IEnumerator ChargeEnemyRangeAttack(EnemyRangeAttack rangeAttack, SpriteRenderer renderer)
     {
         // 色をだんだん薄くする
         while (true)
         {
             m_nowTime += Time.deltaTime;
             float ratio = m_nowTime / m_rangeAttackTime;
-            var color = m_rangeRenderere.material.color;
+            var color = renderer.material.color;
             color.a = 1.0f - ratio;
-            m_rangeRenderere.material.color = color;
+            renderer.material.color = color;
             if (ratio > 0.8f)
             {
                 color.a = 1.0f;
-                m_rangeRenderere.material.color = color;
+                renderer.material.color = color;
                 m_nowTime = 0.0f;
                 // 攻撃コルーチンへ
-                m_mode = BOSS_MANTIS_MODE.RANGE_ATTACKA;
-                m_coroutine = StartCoroutine(EnemyRangeAttack());
+                m_mantisMode = BOSS_MANTIS_MODE.RANGE_ATTACK;
+                m_coroutine = StartCoroutine(EnemyRangeAttack(rangeAttack,renderer));
                 yield break;
             }
             yield return null;
         }
     }
 
-    IEnumerator EnemyRangeAttack()
+    IEnumerator EnemyRangeAttack(EnemyRangeAttack rangeAttack,SpriteRenderer renderer)
     {
         // 範囲攻撃の当たり判定を1フレームだけする
-        m_rangeAttack.gameObject.layer = m_rangeLayerNo;
+        rangeAttack.gameObject.layer = m_rangeLayerNo;
         yield return new WaitForSeconds(0.1f);
-        m_rangeAttack.gameObject.layer = 12;
+        rangeAttack.gameObject.layer = 12;
         yield return new WaitForSeconds(m_afterAttackTime);
-        m_rangeAttack.DeleteList();
-        m_mode = BOSS_MANTIS_MODE.MOVE_ATTACK;
+        rangeAttack.DeleteList();
         m_rigidbody.bodyType = RigidbodyType2D.Dynamic;
         m_renderer.material.color = m_color;
-        Color color = m_rangeRenderere.material.color;
+        Color color = renderer.material.color;
         color.a = 0.0f;
-        m_rangeRenderere.material.color = color;
-        m_rangeAttack.transform.eulerAngles = Vector3.zero;
-        m_rangeAttack.transform.localPosition = Vector3.zero;
+        renderer.material.color = color;
+        rangeAttack.transform.eulerAngles = Vector3.zero;
+        rangeAttack.transform.localPosition = Vector3.zero;
         m_attackedTime = Time.time;
-        // 死んでいるならターゲットから削除
-        if(m_targetType==TARGET_TYPE.MINION)
+        m_target = null;
+        if (FindTarget())
         {
-            if(m_target.GetComponent<Minion>().m_mode==Minion.MINION_MODE.DEAD)
-            {
-                m_target = null;
-            }
+            m_mantisMode = BOSS_MANTIS_MODE.MOVE_ATTACK;
+        }
+        else
+        {
+            m_mantisMode = BOSS_MANTIS_MODE.MOVE_TERRITORY;
         }
         yield break;
+    }
+
+    IEnumerator Wait()
+    {
+        m_mantisMode = BOSS_MANTIS_MODE.AFTER_ATTACK;
+        yield return new WaitForSeconds(10.0f);
+        m_rigidbody.bodyType = RigidbodyType2D.Dynamic;
+        m_target = null;
+        if (FindTarget())
+        {
+            m_mantisMode = BOSS_MANTIS_MODE.MOVE_ATTACK;
+        }
+        else
+        {
+            m_mantisMode = BOSS_MANTIS_MODE.MOVE_TERRITORY;
+        }
+    }
+
+    private bool CheckDeadAllEnemy()
+    {
+        foreach(var enemy in m_enemies)
+        {
+            if(enemy.activeSelf==true)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public override void RevivalEnemy()
+    {
+        m_HP = m_maxHP;
+        transform.position = m_territoryPos;
+        ResetEnemy();
     }
 
     public override void ResetEnemy()
     {
         // 攻撃を中止する
-        m_mode = BOSS_MANTIS_MODE.MOVE_TERRITORY;
+        m_mantisMode = BOSS_MANTIS_MODE.MOVE_TERRITORY;
+        m_mode = ENEMY_MODE.WAIT;
         m_rigidbody.bodyType = RigidbodyType2D.Dynamic;
         if (m_coroutine != null)
         {
@@ -273,12 +394,51 @@ public class Boss_Mantis : Enemy
         }
         m_nowTime = 0.0f;
         m_renderer.material.color = m_color;
-        m_vec = Vector2.zero; Color color = m_rangeRenderere.material.color;
+        m_vec = Vector2.zero; 
+        Color color = m_rangeRenderere.material.color;
         color.a = 0.0f;
         m_rangeRenderere.material.color = color;
         m_rangeAttack.transform.eulerAngles = Vector3.zero;
         m_rangeAttack.transform.localPosition = Vector3.zero;
         m_rangeAttack.gameObject.layer = 12;
+        color = m_rangeRenderereB.material.color;
+        color.a = 0.0f;
+        m_rangeRenderereB.material.color = color;
+        m_rangeAttackB.transform.eulerAngles = Vector3.zero;
+        m_rangeAttackB.transform.localPosition = Vector3.zero;
+        m_rangeAttackB.gameObject.layer = 12;
+    }
+
+    void DeadAllEnemy()
+    {
+        foreach(var enemyObj in m_enemies)
+        {
+            if (enemyObj.activeSelf == false) continue;
+            var enemy=enemyObj.GetComponent<Enemy>();
+            enemy.Damage(enemy.m_MaxHP);
+        }
+    }
+
+    public override void Damage(int damage)
+    {
+        m_HP -= damage;
+        if (m_HP > 0)
+        {
+            // 被弾時処理
+        }
+        else
+        {
+            // 召喚した敵をすべて破壊
+            DeadAllEnemy();
+            m_minionController.AddExperiencePoint(m_levelPoint);
+            gameObject.SetActive(false);
+            m_hpui.SetActive(false);
+            // ターゲットを変更
+            m_mantisMode = BOSS_MANTIS_MODE.DEAD;
+            m_mode = ENEMY_MODE.DEAD;
+            m_minionController.ChangeMode(Minion.MINION_MODE.MOVE_ENEMY);
+            m_enemyController.CheckBecomeMinion(this);
+        }
     }
 
 }

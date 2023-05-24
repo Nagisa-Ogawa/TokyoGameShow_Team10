@@ -125,7 +125,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_enemy: {fileID: 2639703910480705712}
-  m_rangeDistance: 2
+  m_rangeDistance: 1.5
   m_rangeAttackDamage: 2
 --- !u!1 &2639703910480705675
 GameObject:
@@ -264,7 +264,6 @@ MonoBehaviour:
   m_targetMinion: {fileID: 0}
   m_moveDirection: {x: 0, y: 0}
   m_moveDistance: 3
-  m_moveSpeed: 1
   m_enemyAttack: {fileID: 1606219555076759578}
   m_renderer: {fileID: 2639703910480705718}
   m_addAlpha: 0.01
@@ -284,6 +283,7 @@ MonoBehaviour:
   m_rangeAttackTime: 1.5
   m_rangeAfterAttackTime: 1
   m_rangeRenderere: {fileID: 2711791623363661310}
+  m_levelPoint: 1
 --- !u!58 &8078862708849176497
 CircleCollider2D:
   m_ObjectHideFlags: 0
