@@ -166,6 +166,7 @@ public class MinionController : MonoBehaviour
             minion.m_nowTime = 0.0f;
             minion.m_rigidbody.bodyType = RigidbodyType2D.Dynamic;
             minion.m_renderer.material.color = minion.m_color;
+            minion.ResetShadow();
         }
     }
 

@@ -92,6 +92,11 @@ public class Enemy : MonoBehaviour {
     [SerializeField]
     protected bool isRange = true;
 
+    // í èÌçUåÇéûÇÃécëúä÷åW
+    [SerializeField]
+    private GameObject m_shadow = null;
+
+
     // îÕàÕçUåÇä÷åW
     [SerializeField]
     protected EnemyRangeAttack m_rangeAttack = null;
@@ -125,10 +130,10 @@ public class Enemy : MonoBehaviour {
     {
         m_mode = ENEMY_MODE.WAIT;
         m_color=m_renderer.color;
-        m_rangeColor = m_rangeRenderere.material.color;
-        Color color = m_rangeRenderere.material.color;
+        m_rangeColor = m_rangeRenderere.color;
+        Color color = m_rangeRenderere.color;
         color.a = 0.0f;
-        m_rangeRenderere.material.color= color;
+        m_rangeRenderere.color= color;
         m_rangeLayerNo = m_rangeAttack.gameObject.layer;
         m_rangeAttack.gameObject.layer = 12;
         m_rangeAttack.gameObject.SetActive(false);
@@ -237,13 +242,6 @@ public class Enemy : MonoBehaviour {
                     m_mode = ENEMY_MODE.SETUP_ATTACK;
                     StartAttack();
                 }
-                //if (!CheckTargetLeave())
-                //{
-                //}
-                //else
-                //{
-                //    ResetEnemy();
-                //}
                 break;
             case ENEMY_MODE.WAIT_RANGE_ATTACK_COOLDWON:
                 // çUåÇâ¬î\Ç»ÇÁçUåÇÇ÷
@@ -337,6 +335,8 @@ public class Enemy : MonoBehaviour {
             case ENEMY_MODE.WAIT:
                 //var rot = Quaternion.FromToRotation(Vector3.up, m_moveDirection);
                 //transform.rotation = rot;
+                if (m_moveDirection.x > 0.0f && m_renderer.flipX == false) m_renderer.flipX = true;
+                if (m_moveDirection.x < 0.0f && m_renderer.flipX == true) m_renderer.flipX = false;
                 m_rigidbody.velocity = m_moveDirection;
                 break;
             case ENEMY_MODE.MOVE_ATTACK:
@@ -385,6 +385,8 @@ public class Enemy : MonoBehaviour {
         }
         //var rot = Quaternion.FromToRotation(Vector3.up, m_velocity);
         //transform.rotation = rot;
+        if (m_velocity.x > 0.0f && m_renderer.flipX == false) m_renderer.flipX = true;
+        if (m_velocity.x < 0.0f && m_renderer.flipX == true) m_renderer.flipX = false;
         m_rigidbody.velocity = m_velocity;
         // m_rigidbody.MovePosition(transform.position+(Vector3)m_velocity*Time.deltaTime);
         m_vec = Vector2.zero;
@@ -479,12 +481,18 @@ public class Enemy : MonoBehaviour {
         {
             StopCoroutine(m_coroutine);
         }
+        if(m_shadow != null)
+        {
+            m_shadow.GetComponent<EnemyShadow>().ResetAttack();
+            m_renderer.enabled = true;
+            m_shadow.SetActive(false);
+        }
         m_nowTime = 0.0f;
-        m_renderer.material.color = m_color;
+        m_renderer.color = m_color;
         m_vec = Vector2.zero; 
-        Color color = m_rangeRenderere.material.color;
+        Color color = m_rangeRenderere.color;
         color.a = 0.0f;
-        m_rangeRenderere.material.color = color;
+        m_rangeRenderere.color = color;
         m_rangeAttack.transform.eulerAngles = Vector3.zero;
         m_rangeAttack.transform.localPosition = Vector3.zero;
         m_rangeAttack.gameObject.layer = 12;
@@ -497,18 +505,27 @@ public class Enemy : MonoBehaviour {
         ResetEnemy();
     }
 
+    //public void StartAttack()
+    //{
+    //    m_canAttack = false;
+    //    m_color = m_renderer.material.color;
+    //    m_coroutine = StartCoroutine(ChargeEnemyAttack());
+    //}
     public void StartAttack()
     {
         m_canAttack = false;
-        m_color = m_renderer.material.color;
-        m_coroutine = StartCoroutine(ChargeEnemyAttack());
+        m_shadow.gameObject.SetActive(true);
+        m_renderer.enabled = false;
+        // m_coroutine = StartCoroutine(ChargeEnemyAttack());
+        m_shadow.GetComponent<EnemyShadow>().StartAttack(m_target);
     }
+
 
     public virtual void StartRangeAttack()
     {
         m_canAttack = false;
-        m_color = m_renderer.material.color;
-        m_rangeRenderere.material.color = m_rangeColor;
+        m_color = m_renderer.color;
+        m_rangeRenderere.color = m_rangeColor;
         // m_rangeAttack.gameObject.GetComponent<BoxCollider2D>().enabled = false;
         m_rangeAttack.gameObject.SetActive(true);
         // îÕàÕçUåÇópÉIÉuÉWÉFÉNÉgÇìGÇÃï˚å¸Ç÷í≤êÆ
@@ -516,29 +533,29 @@ public class Enemy : MonoBehaviour {
         m_coroutine = StartCoroutine(ChargeEnemyRangeAttack());
     }
 
-    private IEnumerator ChargeEnemyAttack()
-    {
-        // êFÇÇæÇÒÇæÇÒîñÇ≠Ç∑ÇÈ
-        while (true)
-        {
-            m_nowTime += Time.deltaTime;
-            float ratio = m_nowTime / m_attackTime;
-            var color = m_renderer.material.color;
-            color.a = 1.0f - ratio;
-            m_renderer.material.color = color;
-            if (ratio > 0.8f)
-            {
-                color.a = 1.0f;
-                m_renderer.material.color = color;
-                m_nowTime = 0.0f;
-                // çUåÇÉRÉãÅ[É`ÉìÇ÷
-                m_mode = ENEMY_MODE.ATTACK;
-                m_coroutine = StartCoroutine(EnemyAttack());
-                yield break;
-            }
-            yield return null;
-        }
-    }
+    //private IEnumerator ChargeEnemyAttack()
+    //{
+    //    // êFÇÇæÇÒÇæÇÒîñÇ≠Ç∑ÇÈ
+    //    while (true)
+    //    {
+    //        m_nowTime += Time.deltaTime;
+    //        float ratio = m_nowTime / m_attackTime;
+    //        var color = m_renderer.material.color;
+    //        color.a = 1.0f - ratio;
+    //        m_renderer.material.color = color;
+    //        if (ratio > 0.8f)
+    //        {
+    //            color.a = 1.0f;
+    //            m_renderer.material.color = color;
+    //            m_nowTime = 0.0f;
+    //            // çUåÇÉRÉãÅ[É`ÉìÇ÷
+    //            m_mode = ENEMY_MODE.ATTACK;
+    //            m_coroutine = StartCoroutine(EnemyAttack());
+    //            yield break;
+    //        }
+    //        yield return null;
+    //    }
+    //}
 
     private IEnumerator ChargeEnemyRangeAttack()
     {
@@ -547,13 +564,13 @@ public class Enemy : MonoBehaviour {
         {
             m_nowTime += Time.deltaTime;
             float ratio = m_nowTime / m_rangeAttackTime;
-            var color = m_rangeRenderere.material.color;
+            var color = m_rangeRenderere.color;
             color.a = 1.0f - ratio;
-            m_rangeRenderere.material.color = color;
+            m_rangeRenderere.color = color;
             if (ratio > 0.8f)
             {
                 color.a = 1.0f;
-                m_rangeRenderere.material.color = color;
+                m_rangeRenderere.color = color;
                 m_nowTime = 0.0f;
                 // çUåÇÉRÉãÅ[É`ÉìÇ÷
                 m_mode = ENEMY_MODE.RANGE_ATTACK;
@@ -564,11 +581,42 @@ public class Enemy : MonoBehaviour {
         }
     }
 
-    IEnumerator EnemyAttack()
+    //IEnumerator EnemyAttack()
+    //{
+    //    //var color = m_renderer.material.color;
+    //    //color = Color.black;
+    //    //m_renderer.material.color = color;
+    //    // ìGÇÃHPÇå∏ÇÁÇ∑
+    //    if (m_targetType == TARGET_TYPE.MINION)
+    //    {
+    //        m_targetMinion.Damage(m_damage, this);
+    //        if (m_targetMinion.m_mode == Minion.MINION_MODE.DEAD)
+    //        {
+    //            m_enemyAttack.m_HitObjList.Remove(m_target);
+    //            m_target.gameObject.SetActive(false);
+    //        }
+    //    }
+    //    else
+    //    {
+    //        m_target.GetComponent<Player>().Damage(m_damage);
+    //    }
+    //    yield return new WaitForSeconds(m_afterAttackTime);
+    //    m_mode = ENEMY_MODE.MOVE_ATTACK;
+    //    m_rigidbody.bodyType = RigidbodyType2D.Dynamic;
+    //    m_renderer.material.color = m_color;
+    //    m_attackedTime = Time.time;
+    //    if (m_targetType == TARGET_TYPE.MINION)
+    //    {
+    //        if (m_target.GetComponent<Minion>().m_mode == Minion.MINION_MODE.DEAD)
+    //        {
+    //            m_target = null;
+    //        }
+    //    }
+    //    yield break;
+    //}
+
+    public void DamageTarget()
     {
-        //var color = m_renderer.material.color;
-        //color = Color.black;
-        //m_renderer.material.color = color;
         // ìGÇÃHPÇå∏ÇÁÇ∑
         if (m_targetType == TARGET_TYPE.MINION)
         {
@@ -583,10 +631,15 @@ public class Enemy : MonoBehaviour {
         {
             m_target.GetComponent<Player>().Damage(m_damage);
         }
-        yield return new WaitForSeconds(m_afterAttackTime);
+    }
+
+    public void EndAttack()
+    {
+        m_renderer.enabled = true;
+        m_shadow.SetActive(false);
         m_mode = ENEMY_MODE.MOVE_ATTACK;
         m_rigidbody.bodyType = RigidbodyType2D.Dynamic;
-        m_renderer.material.color = m_color;
+        m_renderer.color = m_color;
         m_attackedTime = Time.time;
         if (m_targetType == TARGET_TYPE.MINION)
         {
@@ -595,7 +648,6 @@ public class Enemy : MonoBehaviour {
                 m_target = null;
             }
         }
-        yield break;
     }
 
     IEnumerator EnemyRangeAttack()
@@ -637,10 +689,10 @@ public class Enemy : MonoBehaviour {
         m_rangeAttack.DeleteList();
         m_mode = ENEMY_MODE.MOVE_ATTACK;
         m_rigidbody.bodyType = RigidbodyType2D.Dynamic;
-        m_renderer.material.color = m_color;
-        Color color = m_rangeRenderere.material.color;
+        m_renderer.color = m_color;
+        Color color = m_rangeRenderere.color;
         color.a = 0.0f;
-        m_rangeRenderere.material.color = color;
+        m_rangeRenderere.color = color;
         m_rangeAttack.transform.eulerAngles = Vector3.zero;
         m_rangeAttack.transform.localPosition = Vector3.zero;
 

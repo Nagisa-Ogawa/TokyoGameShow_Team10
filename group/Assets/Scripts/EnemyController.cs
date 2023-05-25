@@ -84,6 +84,7 @@ public class EnemyController : MonoBehaviour
         foreach(Enemy enemy in m_enemyList)
         {
             if (enemy.m_mode == Enemy.ENEMY_MODE.DEAD) continue;
+            if(enemy.gameObject.activeSelf==false) continue;
             if (minDistance >= (m_player.transform.position - enemy.transform.position).magnitude)
             {
                 target = enemy;

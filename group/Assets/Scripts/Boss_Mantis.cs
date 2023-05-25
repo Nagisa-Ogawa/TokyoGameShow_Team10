@@ -239,8 +239,8 @@ public class Boss_Mantis : Enemy
         switch (m_mantisMode)
         {
             case BOSS_MANTIS_MODE.WAIT:
-                //var rot = Quaternion.FromToRotation(Vector3.up, m_moveDirection);
-                //transform.rotation = rot;
+                if (m_moveDirection.x > 0.0f && m_renderer.flipX == false) m_renderer.flipX = true;
+                if (m_moveDirection.x < 0.0f && m_renderer.flipX == true) m_renderer.flipX = false;
                 m_rigidbody.velocity = m_moveDirection;
                 break;
             case BOSS_MANTIS_MODE.MOVE_ATTACK:
@@ -275,8 +275,8 @@ public class Boss_Mantis : Enemy
         {
             m_velocity = m_chaseSpeed * dir;
         }
-        //var rot = Quaternion.FromToRotation(Vector3.up, m_velocity);
-        //transform.rotation = rot;
+        if (m_velocity.x > 0.0f && m_renderer.flipX == false) m_renderer.flipX = true;
+        if (m_velocity.x < 0.0f && m_renderer.flipX == true) m_renderer.flipX = false;
         m_rigidbody.velocity = m_velocity;
         // m_rigidbody.MovePosition(transform.position+(Vector3)m_velocity*Time.deltaTime);
         m_vec = Vector2.zero;

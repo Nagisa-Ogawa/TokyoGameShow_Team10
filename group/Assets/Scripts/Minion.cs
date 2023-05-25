@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
+using static Enemy;
 
 public class Minion:MonoBehaviour
 {
@@ -36,6 +37,7 @@ public class Minion:MonoBehaviour
     public int m_damage = 2;
     public int m_Damage { get { return m_damage; } private set { m_damage = value; } }
     public Renderer m_renderer = null;
+    public SpriteRenderer m_spriteRenderer = null;
     public float m_addAlpha = 0.02f;
     public float m_attackTime = 2.0f;
     public float m_nowTime = 0.0f;
@@ -86,6 +88,9 @@ public class Minion:MonoBehaviour
     [SerializeField]
     private int m_addSpeed = 1;
     public int m_AddSpeed { get {  return m_addSpeed; } private set { m_addSpeed = value; } }
+    // ’ÊíUŒ‚‚Ìc‘œŠÖŒW
+    [SerializeField]
+    private GameObject m_shadow = null;
 
 
     private void Awake()
@@ -101,6 +106,7 @@ public class Minion:MonoBehaviour
         m_pos = transform.position;
         // m_vec = transform.up * Random.Range(m_Param.minSpeed, m_Param.maxSpeed);
         m_maxHP = m_HP;
+        m_shadow.SetActive(false);
     }
 
     protected void Update()
@@ -306,6 +312,8 @@ public class Minion:MonoBehaviour
         }
         //var rot = Quaternion.FromToRotation(Vector3.up, m_velocity);
         //transform.rotation = rot;
+        if (m_velocity.x > 0.0f && m_spriteRenderer.flipX == false) m_spriteRenderer.flipX = true;
+        if (m_velocity.x < 0.0f && m_spriteRenderer.flipX == true) m_spriteRenderer.flipX = false;
         m_rigidbody.velocity = m_velocity;
         m_vec = Vector2.zero;
         // m_velocity = Vector2.zero;
@@ -325,50 +333,75 @@ public class Minion:MonoBehaviour
             m_minionController.ChangeMode(MINION_MODE.FOLLOW);
         }
     }
+    //public void StartAttack()
+    //{
+    //    m_mode = Minion.MINION_MODE.ATTACK;
+    //    m_canAttack = false;
+    //    m_coroutine = StartCoroutine(ChargeAttack());
+    //}
     public void StartAttack()
     {
-        m_mode = Minion.MINION_MODE.ATTACK;
+        m_mode = MINION_MODE.ATTACK;
         m_canAttack = false;
-        m_coroutine = StartCoroutine(ChargeAttack());
+        m_shadow.gameObject.SetActive(true);
+        m_spriteRenderer.enabled = false;
+        m_shadow.GetComponent<MinionShadow>().StartAttack(m_target);
     }
 
-    IEnumerator ChargeAttack() 
-    { 
-        // F‚ğ‚¾‚ñ‚¾‚ñ”–‚­‚·‚é
-        while (true)
-        {
-            m_nowTime += Time.deltaTime;
-            float ratio = m_nowTime / m_attackTime;
-            var color = m_renderer.material.color;
-            color.a = 1.0f - ratio;
-            m_renderer.material.color = color;
-            if (ratio > 0.8f)
-            {
-                color.a = 1.0f;
-                m_renderer.material.color = color;
-                m_nowTime = 0.0f;
-                // UŒ‚ƒRƒ‹[ƒ`ƒ“‚Ö
-                m_coroutine = StartCoroutine(Attack());
-                yield break;
-            }
-            yield return null;
-        }
-    }
-
-    IEnumerator Attack()
+    public void DamageTarget()
     {
-        //var color=m_renderer.material.color;
-        //color = Color.black;
-        //m_renderer.material.color = color;
         // “G‚ÌHP‚ğŒ¸‚ç‚·
         m_targetEnemy.Damage(m_damage);
-        yield return new WaitForSeconds(m_afterAttackTime);
+    }
+
+    public void EndAttack()
+    {
+        m_spriteRenderer.enabled = true;
+        m_shadow.SetActive(false);
         m_mode = m_minionController.m_mode;
         m_renderer.material.color = m_color;
         m_rigidbody.bodyType = RigidbodyType2D.Dynamic;
         m_attackedTime = Time.time;
-        yield break;
     }
+
+    //IEnumerator ChargeAttack() 
+    //{ 
+    //    // F‚ğ‚¾‚ñ‚¾‚ñ”–‚­‚·‚é
+    //    while (true)
+    //    {
+    //        m_nowTime += Time.deltaTime;
+    //        float ratio = m_nowTime / m_attackTime;
+    //        var color = m_renderer.material.color;
+    //        color.a = 1.0f - ratio;
+    //        m_renderer.material.color = color;
+    //        if (ratio > 0.8f)
+    //        {
+    //            color.a = 1.0f;
+    //            m_renderer.material.color = color;
+    //            m_nowTime = 0.0f;
+    //            // UŒ‚ƒRƒ‹[ƒ`ƒ“‚Ö
+    //            m_coroutine = StartCoroutine(Attack());
+    //            yield break;
+    //        }
+    //        yield return null;
+    //    }
+    //}
+
+
+    //IEnumerator Attack()
+    //{
+    //    //var color=m_renderer.material.color;
+    //    //color = Color.black;
+    //    //m_renderer.material.color = color;
+    //    // “G‚ÌHP‚ğŒ¸‚ç‚·
+    //    m_targetEnemy.Damage(m_damage);
+    //    yield return new WaitForSeconds(m_afterAttackTime);
+    //    m_mode = m_minionController.m_mode;
+    //    m_renderer.material.color = m_color;
+    //    m_rigidbody.bodyType = RigidbodyType2D.Dynamic;
+    //    m_attackedTime = Time.time;
+    //    yield break;
+    //}
 
     public void Damage(int damage,Enemy enemy)
     {
@@ -379,10 +412,11 @@ public class Minion:MonoBehaviour
         }
         else
         {
-            gameObject.SetActive(false);
-            m_hpui.SetActive(false);
             // “G‚ÌUŒ‚”ÍˆÍ“à‚Å€–S‚µ‚½‚È‚ç“G‚ÌUŒ‚‰Â”\ƒŠƒXƒg‚©‚ç©•ª‚ğÁ‹
             // enemy.DeleteMinionAttackList(this);
+            m_shadow.GetComponent<MinionShadow>().ResetAttack();
+            m_spriteRenderer.enabled = true;
+            m_shadow.SetActive(false);
             // ƒ^[ƒQƒbƒg‚ğ•ÏX
             m_mode = MINION_MODE.DEAD;
             m_renderer.material.color = m_color;
@@ -394,6 +428,8 @@ public class Minion:MonoBehaviour
             m_target = null;
             m_targetEnemy = null;
             m_nowTime = 0.0f;
+            gameObject.SetActive(false);
+            m_hpui.SetActive(false);
             // ‘S–Å‚©‚Ç‚¤‚©”»’è
             m_minionController.StartCoroutine(m_minionController.CheckAllDied());
         }
@@ -426,6 +462,13 @@ public class Minion:MonoBehaviour
         {
             StopCoroutine(m_coroutine);
         }
+    }
+
+    public void ResetShadow()
+    {
+        m_shadow.GetComponent<MinionShadow>().ResetAttack();
+        m_spriteRenderer.enabled = true;
+        m_shadow.SetActive(false);
     }
 
     public void LevelUp()

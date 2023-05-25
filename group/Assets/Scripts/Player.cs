@@ -22,6 +22,8 @@ public class Player : MonoBehaviour
     [SerializeField]
     private float m_returnDistance = 10.0f;
     public float m_ReturnDistance { get { return m_returnDistance; } private set { m_returnDistance = value; } }
+    [SerializeField]
+    private SpriteRenderer m_sRenderer = null;
 
     // UŒ‚ŠÖ˜A
     [SerializeField]
@@ -204,6 +206,8 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (m_dir.x > 0.0f && m_sRenderer.flipX == false) m_sRenderer.flipX = true;
+        if (m_dir.x < 0.0f && m_sRenderer.flipX == true) m_sRenderer.flipX = false;
         rigidBody.velocity = new Vector2(m_dir.x, m_dir.y) * m_speed * Time.fixedDeltaTime;
     }
 

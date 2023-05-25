@@ -73,7 +73,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -2080490533
-  m_SortingLayer: 3
+  m_SortingLayer: 2
   m_SortingOrder: 0
   m_Sprite: {fileID: -2413806693520163455, guid: ebe73ca9363db456bacf42c025bb4847, type: 3}
   m_Color: {r: 1, g: 0, b: 0, a: 0.50980395}
@@ -190,7 +190,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -2080490533
-  m_SortingLayer: 3
+  m_SortingLayer: 2
   m_SortingOrder: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   m_Color: {r: 1, g: 0, b: 0, a: 0.50980395}
@@ -383,7 +383,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -2080490533
-  m_SortingLayer: 3
+  m_SortingLayer: 2
   m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: 9bac78db3956c1944806d6eaa685642e, type: 3}
   m_Color: {r: 0.9716981, g: 0.3254272, b: 0.3254272, a: 1}
@@ -412,12 +412,12 @@ MonoBehaviour:
   m_type: 8
   m_hpui: {fileID: 0}
   m_rigidbody: {fileID: 6394145888080149058}
-  m_HP: 1
+  m_HP: 50
   m_damage: 2
   m_speed: 4
   m_mutekitime: 3
   m_mutekiFlag: 0
-  m_territoryDistance: 10
+  m_territoryDistance: 7
   m_stopAttackDistance: 2
   m_target: {fileID: 0}
   m_targetMinion: {fileID: 0}
@@ -435,6 +435,7 @@ MonoBehaviour:
   m_color: {r: 0, g: 0, b: 0, a: 0}
   m_canAttack: 1
   isRange: 1
+  m_shadow: {fileID: 0}
   m_rangeAttack: {fileID: 5735123184866078032}
   m_addAlphaRange: 0.02
   m_attackTimeRange: 2
