@@ -269,7 +269,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_mode: 0
-  m_type: 1
+  m_type: 3
   m_HP: 3
   m_damage: 1
   m_renderer: {fileID: 8581922048600788609}

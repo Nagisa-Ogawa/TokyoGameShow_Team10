@@ -18,9 +18,7 @@ public class MinionController : MonoBehaviour
     public Minion.MINION_MODE m_mode { get; set; }
     public List<Minion> m_Minions { get { return m_minions; } private set { m_minions = value; }  }
     [SerializeField]
-    private GameObject m_minionA = null;
-    [SerializeField]
-    private GameObject m_minionB= null;
+    private List<GameObject> m_minionPrefabList = new List<GameObject>();
     [SerializeField]
     private GameObject m_canvas= null;
     [SerializeField]
@@ -42,9 +40,9 @@ public class MinionController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        for(int i = 0; i < m_minionMax; i++)
+        for(int i = 0; i < 7; i++)
         {
-            var minion = Instantiate(m_minionA);
+            var minion = Instantiate(m_minionPrefabList[i]);
             Vector3 pos = new Vector3(Random.Range(-3.0f, 3.0f), Random.Range(-3.0f, 3.0f), 0.0f)+m_player.transform.position;
             // float angleZ = Random.Range(0, 360.0f);
             minion.transform.position = pos;
@@ -67,44 +65,60 @@ public class MinionController : MonoBehaviour
 
     public void CreateMinion(Enemy enemy)
     {
-        if (enemy.m_type == Enemy.ENEMY_TYPE.LADYBIRD)
+        // ミニオンにする
+        var minionObj = Instantiate(m_minionPrefabList[(int)enemy.m_type]);
+        var minion = minionObj.GetComponent<Minion>();
+        minion.transform.position = enemy.transform.position;
+        minion.m_mode = m_mode;
+        if (m_enemyController.m_targetEnemy != null)
         {
-            // ミニオンにする
-            var minionObj = Instantiate(m_minionA);
-            var minion = minionObj.GetComponent<Minion>();
-            minion.transform.position = enemy.transform.position;
-            minion.m_mode = m_mode;
-            if (m_enemyController.m_targetEnemy != null)
-            {
-                minion.m_targetEnemy = m_enemyController.m_targetEnemy;
-                minion.m_target = m_enemyController.m_targetEnemy.gameObject;
-            }
-            SetStatus(minion);
-            m_Minions.Add(minion);
-            // ui作成
-            var hpui = Instantiate(m_hpui, m_hpUIParent.transform);
-            minion.m_hpui = hpui;
-            hpui.GetComponent<MinionHPUI>().m_minion = minion;
+            minion.m_targetEnemy = m_enemyController.m_targetEnemy;
+            minion.m_target = m_enemyController.m_targetEnemy.gameObject;
         }
-        else if(enemy.m_type==Enemy.ENEMY_TYPE.ANTS)
-        {
-            // ミニオンにする
-            var minionObj = Instantiate(m_minionB);
-            var minion = minionObj.GetComponent<Minion>();
-            minion.transform.position = enemy.transform.position;
-            minion.m_mode = m_mode;
-            if(m_enemyController.m_targetEnemy != null)
-            {
-                minion.m_targetEnemy = m_enemyController.m_targetEnemy;
-                minion.m_target = m_enemyController.m_targetEnemy.gameObject;
-            }
-            SetStatus(minion);
-            m_Minions.Add(minion);
-            // ui作成
-            var hpui = Instantiate(m_hpui, m_hpUIParent.transform);
-            minion.m_hpui = hpui;
-            hpui.GetComponent<MinionHPUI>().m_minion = minion;
-        }
+        SetStatus(minion);
+        m_Minions.Add(minion);
+        // ui作成
+        var hpui = Instantiate(m_hpui, m_hpUIParent.transform);
+        minion.m_hpui = hpui;
+        hpui.GetComponent<MinionHPUI>().m_minion = minion;
+        //if (enemy.m_type == Enemy.ENEMY_TYPE.LADYBIRD)
+        //{
+        //    // ミニオンにする
+        //    var minionObj = Instantiate(m_minionA);
+        //    var minion = minionObj.GetComponent<Minion>();
+        //    minion.transform.position = enemy.transform.position;
+        //    minion.m_mode = m_mode;
+        //    if (m_enemyController.m_targetEnemy != null)
+        //    {
+        //        minion.m_targetEnemy = m_enemyController.m_targetEnemy;
+        //        minion.m_target = m_enemyController.m_targetEnemy.gameObject;
+        //    }
+        //    SetStatus(minion);
+        //    m_Minions.Add(minion);
+        //    // ui作成
+        //    var hpui = Instantiate(m_hpui, m_hpUIParent.transform);
+        //    minion.m_hpui = hpui;
+        //    hpui.GetComponent<MinionHPUI>().m_minion = minion;
+        //}
+        //else if(enemy.m_type==Enemy.ENEMY_TYPE.ANTS)
+        //{
+        //    // ミニオンにする
+        //    var minionObj = Instantiate(m_minionB);
+        //    var minion = minionObj.GetComponent<Minion>();
+        //    minion.transform.position = enemy.transform.position;
+        //    minion.m_mode = m_mode;
+        //    if(m_enemyController.m_targetEnemy != null)
+        //    {
+        //        minion.m_targetEnemy = m_enemyController.m_targetEnemy;
+        //        minion.m_target = m_enemyController.m_targetEnemy.gameObject;
+        //    }
+        //    SetStatus(minion);
+        //    m_Minions.Add(minion);
+        //    // ui作成
+        //    var hpui = Instantiate(m_hpui, m_hpUIParent.transform);
+        //    minion.m_hpui = hpui;
+        //    hpui.GetComponent<MinionHPUI>().m_minion = minion;
+        //}
         ChangeMode(Minion.MINION_MODE.MOVE_ENEMY);
     }
 
