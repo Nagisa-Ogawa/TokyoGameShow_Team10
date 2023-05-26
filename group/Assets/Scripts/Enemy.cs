@@ -118,36 +118,21 @@ public class Enemy : MonoBehaviour {
     {
         m_minionController = GameObject.Find("MinionController").GetComponent<MinionController>();
         m_enemyController = GameObject.Find("EnemyController").GetComponent<EnemyController>();
-    }
-    // Start is called before the first frame update
-    void Start()
-    {
-        m_mode = ENEMY_MODE.WAIT;
-        m_color=m_renderer.color;
-        m_rangeColor = m_rangeRenderere.color;
-        Color color = m_rangeRenderere.color;
-        color.a = 0.0f;
-        m_rangeRenderere.color= color;
-        m_rangeLayerNo = m_rangeAttack.gameObject.layer;
-        m_rangeAttack.gameObject.layer = 12;
-        m_rangeAttack.gameObject.SetActive(false);
-        m_territoryPos = gameObject.transform.position;
-        m_maxHP = m_HP;
-    }
-
-    public void Init()
-    {
-        m_mode = ENEMY_MODE.WAIT;
         m_color = m_renderer.color;
         m_rangeColor = m_rangeRenderere.color;
         Color color = m_rangeRenderere.color;
         color.a = 0.0f;
         m_rangeRenderere.color = color;
+        m_mode = ENEMY_MODE.WAIT;
         m_rangeLayerNo = m_rangeAttack.gameObject.layer;
         m_rangeAttack.gameObject.layer = 12;
         m_rangeAttack.gameObject.SetActive(false);
         m_territoryPos = gameObject.transform.position;
         m_maxHP = m_HP;
+    }
+    // Start is called before the first frame update
+    void Start()
+    {
     }
 
     // Update is called once per frame

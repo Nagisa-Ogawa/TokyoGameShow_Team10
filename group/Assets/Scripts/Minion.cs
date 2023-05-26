@@ -29,13 +29,13 @@ public class Minion:MonoBehaviour
         DRAGONFLY,
         MANTIS,
     }
-    public GameObject m_playerBack {get;private set;}
+    public GameObject m_playerBack {get; protected set;}
     public MINION_MODE m_mode;
     public MINION_TYPE m_type;
     public int m_HP = 3;
-    public int m_maxHP {get; private set;}
+    public int m_maxHP {get; protected set;}
     public int m_damage = 2;
-    public int m_Damage { get { return m_damage; } private set { m_damage = value; } }
+    public int m_Damage { get { return m_damage; } protected set { m_damage = value; } }
     public Renderer m_renderer = null;
     public SpriteRenderer m_spriteRenderer = null;
     public float m_addAlpha = 0.02f;
@@ -48,52 +48,52 @@ public class Minion:MonoBehaviour
     public bool m_canAttack = true;
     public float m_escapeDistance = 50.0f;
     public float m_speed = 5.0f;
-    public float m_Speed { get { return m_speed; } private set { m_speed = value; } }
+    public float m_Speed { get { return m_speed; } protected set { m_speed = value; } }
     [SerializeField]
-    private float m_escapeSpeed = 10.0f;
+    protected float m_escapeSpeed = 10.0f;
     [SerializeField]
-    private float m_stopAttackDistance = 2.0f;
+    protected float m_stopAttackDistance = 2.0f;
     [SerializeField]
-    private float m_stopAttackBossDistance = 5.0f;
+    protected float m_stopAttackBossDistance = 5.0f;
 
     public Param m_Param = null;
     public Rigidbody2D m_rigidbody { get; set; }
-    private MinionController m_minionController = null;
+    protected MinionController m_minionController = null;
     public MinionController m_MinionController { get { return m_minionController; } protected set { m_minionController = value; } }
-    public GameObject m_player { get; private set; }
-    private List<Minion> m_neighborsList = new List<Minion>();
-    public List<Minion> m_NeighborsList { get { return m_neighborsList; } private set { m_neighborsList = value; } }
-    public Vector2 m_pos { get; private set; }
-    private Vector2 m_vec = Vector3.zero;
-    private Vector2 m_beforPos = Vector2.zero;
+    public GameObject m_player { get; protected set; }
+    protected List<Minion> m_neighborsList = new List<Minion>();
+    public List<Minion> m_NeighborsList { get { return m_neighborsList; } protected set { m_neighborsList = value; } }
+    public Vector2 m_pos { get; protected set; }
+    protected Vector2 m_vec = Vector3.zero;
+    protected Vector2 m_beforPos = Vector2.zero;
     public GameObject m_target { get; set; }
     public Enemy m_targetEnemy { get; set; }
 
     public GameObject m_hpui { get; set; }
 
-    private Coroutine m_coroutine = null;
+    protected Coroutine m_coroutine = null;
     [SerializeField]
-    private AttackCollider m_attackCollider = null;
+    protected AttackCollider m_attackCollider = null;
 
     // ÉåÉxÉãÉAÉbÉvä÷åW
     [SerializeField]
-    private int m_level = 1;
-    public int m_Level { get { return m_level; } private set {  m_level = value; } }
+    protected int m_level = 1;
+    public int m_Level { get { return m_level; } protected set {  m_level = value; } }
     [SerializeField]
-    private int m_addHp = 5;
-    public int m_AddHp { get {  return m_addHp; } private set {  m_addHp = value; } }
+    protected int m_addHp = 5;
+    public int m_AddHp { get {  return m_addHp; } protected set {  m_addHp = value; } }
     [SerializeField]
-    private int m_addDamage = 1;
-    public int m_AddDamage { get {  return m_addDamage; } private set { m_addDamage = value; } }
+    protected int m_addDamage = 1;
+    public int m_AddDamage { get {  return m_addDamage; } protected set { m_addDamage = value; } }
     [SerializeField]
-    private int m_addSpeed = 1;
-    public int m_AddSpeed { get {  return m_addSpeed; } private set { m_addSpeed = value; } }
+    protected int m_addSpeed = 1;
+    public int m_AddSpeed { get {  return m_addSpeed; } protected set { m_addSpeed = value; } }
     // í èÌçUåÇéûÇÃécëúä÷åW
     [SerializeField]
-    private GameObject m_shadow = null;
+    protected GameObject m_shadow = null;
 
 
-    private void Awake()
+    protected void Awake()
     {
         m_MinionController = GameObject.Find("MinionController").GetComponent<MinionController>();
         m_player = GameObject.Find("Player");
@@ -104,7 +104,6 @@ public class Minion:MonoBehaviour
     protected void Start()
     {
         m_pos = transform.position;
-        // m_vec = transform.up * Random.Range(m_Param.minSpeed, m_Param.maxSpeed);
         m_maxHP = m_HP;
         m_shadow.SetActive(false);
     }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
-using static UnityEditor.ShaderData;
 #if UNITY_EDITOR
 [CustomEditor(typeof(Enemy))]
 #endif
@@ -38,11 +37,16 @@ public class Boss_Mantis : Enemy
     private int m_createEnemyNum = 4;
     private List<GameObject> m_enemies = new List<GameObject>();
 
+    private void Awake()
+    {
+        m_minionController = GameObject.Find("MinionController").GetComponent<MinionController>();
+        m_enemyController = GameObject.Find("EnemyController").GetComponent<EnemyController>();
+    }
     // Start is called before the first frame update
     void Start()
     {
         m_mantisMode = BOSS_MANTIS_MODE.WAIT;
-        m_type = Enemy.ENEMY_TYPE.BOSS_MANTIS;
+        m_type = ENEMY_TYPE.BOSS_MANTIS;
         m_rangeColor = m_rangeRenderere.color;
         m_rangeColorB = m_rangeRenderereB.color;
         m_color=m_renderer.color;
@@ -64,7 +68,6 @@ public class Boss_Mantis : Enemy
         foreach(var enemy in enemies)
         {
             m_enemies.Add(enemy);
-            enemy.GetComponent<Enemy>().Init();
             enemy.gameObject.SetActive(false);
             enemy.GetComponent<Enemy>().m_hpui.gameObject.SetActive(false);
         }
@@ -120,7 +123,8 @@ public class Boss_Mantis : Enemy
 
                     m_rigidbody.bodyType = RigidbodyType2D.Kinematic;
                     m_rigidbody.velocity = Vector3.zero;
-                    m_choice = Random.Range(0, 3);
+                    // m_choice = Random.Range(0, 3);
+                    m_choice = 2;
                     if (m_choice == 2 && CheckDeadAllEnemy() == false)
                     {
                         m_choice = Random.Range(0, 2);
