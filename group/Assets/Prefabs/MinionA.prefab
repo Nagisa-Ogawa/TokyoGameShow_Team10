@@ -100,8 +100,8 @@ MonoBehaviour:
   m_minionObj: {fileID: 8581922048600788608}
   m_minion: {fileID: -4371522621259623738}
   m_sRendere: {fileID: 6396325655935171373}
-  m_goTime: 0.2
-  m_returnTime: 0.2
+  m_goTime: 0.1
+  m_returnTime: 0.1
   m_waitStartTime: 1
   m_waitEndTime: 1
   m_maxDistance: 2.5

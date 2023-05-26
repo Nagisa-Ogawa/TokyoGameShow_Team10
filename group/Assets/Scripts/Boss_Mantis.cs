@@ -43,15 +43,15 @@ public class Boss_Mantis : Enemy
     {
         m_mantisMode = BOSS_MANTIS_MODE.WAIT;
         m_type = Enemy.ENEMY_TYPE.BOSS_MANTIS;
-        m_rangeColor = m_rangeRenderere.material.color;
-        m_rangeColorB = m_rangeRenderereB.material.color;
-        m_color=m_renderer.material.color;
-        Color color = m_rangeRenderere.material.color;
+        m_rangeColor = m_rangeRenderere.color;
+        m_rangeColorB = m_rangeRenderereB.color;
+        m_color=m_renderer.color;
+        Color color = m_rangeRenderere.color;
         color.a = 0.0f;
-        m_rangeRenderere.material.color = color;
-        color = m_rangeRenderereB.material.color;
+        m_rangeRenderere.color = color;
+        color = m_rangeRenderereB.color;
         color.a = 0.0f;
-        m_rangeRenderereB.material.color = color;
+        m_rangeRenderereB.color = color;
         m_rangeLayerNo = m_rangeAttack.gameObject.layer;
         m_rangeAttack.gameObject.layer = 12;
         m_rangeAttack.gameObject.SetActive(false);
@@ -73,7 +73,6 @@ public class Boss_Mantis : Enemy
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(m_mantisMode);
         switch (m_mantisMode)
         {
             case BOSS_MANTIS_MODE.WAIT:
@@ -286,8 +285,7 @@ public class Boss_Mantis : Enemy
     public void StartRangeAttack(EnemyRangeAttack rangeAttack,SpriteRenderer renderer,Color color)
     {
         m_canAttack = false;
-        m_color = m_renderer.material.color;
-        renderer.material.color = color;
+        renderer.color = color;
         // m_rangeAttack.gameObject.GetComponent<BoxCollider2D>().enabled = false;
         rangeAttack.gameObject.SetActive(true);
         // 範囲攻撃用オブジェクトを敵の方向へ調整
@@ -395,9 +393,9 @@ public class Boss_Mantis : Enemy
         m_nowTime = 0.0f;
         m_renderer.material.color = m_color;
         m_vec = Vector2.zero; 
-        Color color = m_rangeRenderere.material.color;
+        Color color = m_rangeRenderere.color;
         color.a = 0.0f;
-        m_rangeRenderere.material.color = color;
+        m_rangeRenderere.color = color;
         m_rangeAttack.transform.eulerAngles = Vector3.zero;
         m_rangeAttack.transform.localPosition = Vector3.zero;
         m_rangeAttack.gameObject.layer = 12;

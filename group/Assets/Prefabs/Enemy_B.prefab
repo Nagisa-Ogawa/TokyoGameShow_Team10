@@ -403,8 +403,8 @@ MonoBehaviour:
   m_enemyObj: {fileID: 2639703910480705675}
   m_enemy: {fileID: 2639703910480705712}
   m_sRendere: {fileID: 5389955820568503194}
-  m_goTime: 0.2
-  m_returnTime: 0.2
+  m_goTime: 0.1
+  m_returnTime: 0.1
   m_waitStartTime: 1
   m_waitEndTime: 1
 --- !u!1 &3274452955866020136

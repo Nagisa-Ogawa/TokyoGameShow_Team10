@@ -79,8 +79,6 @@ public class Enemy : MonoBehaviour {
     [SerializeField]
     protected SpriteRenderer m_renderer = null;
     [SerializeField]
-    protected float m_addAlpha = 0.02f;
-    [SerializeField]
     protected float m_chaseSpeed = 4.0f;
     public float m_attackTime = 2.0f;
     public float m_nowTime = 0.0f;
@@ -100,10 +98,6 @@ public class Enemy : MonoBehaviour {
     // îÕàÕçUåÇä÷åW
     [SerializeField]
     protected EnemyRangeAttack m_rangeAttack = null;
-    [SerializeField]
-    protected float m_addAlphaRange = 0.02f;
-    [SerializeField]
-    protected float m_attackTimeRange = 2.0f;
     [SerializeField]
     protected float m_rangeAttackCoolDown=3.0f;
     [SerializeField]
@@ -145,10 +139,10 @@ public class Enemy : MonoBehaviour {
     {
         m_mode = ENEMY_MODE.WAIT;
         m_color = m_renderer.color;
-        m_rangeColor = m_rangeRenderere.material.color;
-        Color color = m_rangeRenderere.material.color;
+        m_rangeColor = m_rangeRenderere.color;
+        Color color = m_rangeRenderere.color;
         color.a = 0.0f;
-        m_rangeRenderere.material.color = color;
+        m_rangeRenderere.color = color;
         m_rangeLayerNo = m_rangeAttack.gameObject.layer;
         m_rangeAttack.gameObject.layer = 12;
         m_rangeAttack.gameObject.SetActive(false);
@@ -524,7 +518,6 @@ public class Enemy : MonoBehaviour {
     public virtual void StartRangeAttack()
     {
         m_canAttack = false;
-        m_color = m_renderer.color;
         m_rangeRenderere.color = m_rangeColor;
         // m_rangeAttack.gameObject.GetComponent<BoxCollider2D>().enabled = false;
         m_rangeAttack.gameObject.SetActive(true);
@@ -565,12 +558,11 @@ public class Enemy : MonoBehaviour {
             m_nowTime += Time.deltaTime;
             float ratio = m_nowTime / m_rangeAttackTime;
             var color = m_rangeRenderere.color;
-            color.a = 1.0f - ratio;
+            color.a = m_rangeColor.a * (1.0f - ratio);
             m_rangeRenderere.color = color;
             if (ratio > 0.8f)
             {
-                color.a = 1.0f;
-                m_rangeRenderere.color = color;
+                m_rangeRenderere.color = m_rangeColor;
                 m_nowTime = 0.0f;
                 // çUåÇÉRÉãÅ[É`ÉìÇ÷
                 m_mode = ENEMY_MODE.RANGE_ATTACK;
