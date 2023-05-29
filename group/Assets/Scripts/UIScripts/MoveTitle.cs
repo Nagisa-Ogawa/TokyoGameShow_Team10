@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class StartButton : MonoBehaviour
-{
-    public void OnStart()
+public class MoveTitle : MonoBehaviour
+{   public void OnStart()
     {
-        SceneManager.LoadScene("Stage1");
+        SceneManager.LoadScene("Title");
     }
 }
