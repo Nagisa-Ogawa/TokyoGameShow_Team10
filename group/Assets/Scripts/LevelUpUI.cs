@@ -30,19 +30,17 @@ public class LevelUpUI : MonoBehaviour
     [SerializeField]
     private List<TextMeshProUGUI> m_plusDamageTextList = new List<TextMeshProUGUI>();
     [SerializeField]
-    private List<TextMeshProUGUI> m_SpeedTextList = new List<TextMeshProUGUI>();
+    private TextMeshProUGUI m_totalPointText = null;
     [SerializeField]
-    private List<TextMeshProUGUI> m_plusSpeedTextList = new List<TextMeshProUGUI>();
+    private TextMeshProUGUI m_plusPointText = null;
 
     private List<int> m_levelList = new List<int>();
     private List<int> m_HPList= new List<int>();
     private List<int> m_damageList= new List<int>();
-    private List<float> m_speedList = new List<float>();
 
     private List<int> m_plusLevelList= new List<int>();
     private List<int> m_plusHPList= new List<int>();
     private List<int> m_plusDamageList= new List<int>();
-    private List<float> m_plusSpeedList= new List<float>();
 
     private int m_nowFrame = 0;
 
@@ -56,12 +54,10 @@ public class LevelUpUI : MonoBehaviour
             m_levelList.Add(0);
             m_HPList.Add(0);
             m_damageList.Add(0);
-            m_speedList.Add(0.0f);
 
             m_plusLevelList.Add(1);
             m_plusHPList.Add(0);
             m_plusDamageList.Add(0);
-            m_plusSpeedList.Add(0.0f);
         }
         HideAll();
     }
@@ -79,12 +75,32 @@ public class LevelUpUI : MonoBehaviour
         ShowButton();
         GetStatus();
         ShowStatus();
+        GetTotalPoint();
         if(m_minionController.m_LevelUpPoint>0)
         {
             ShowPlusStatus(m_nowFrame);
+            ShowPlusTotalPoint();
             m_levelUpFrameList[m_nowFrame].SetActive(true);
         }
         m_levelUpUI.SetActive(true);
+    }
+
+    void GetTotalPoint()
+    {
+        m_totalPointText.text = "POINT : " + m_minionController.m_LevelUpPoint;
+    }
+
+    void ShowPlusTotalPoint()
+    {
+        m_plusPointText.gameObject.SetActive(true);
+        if (m_levelList[m_nowFrame] < 6)
+        {
+            m_plusPointText.text = "-1";
+        }
+        else
+        {
+            m_plusPointText.text = "-2";
+        }
     }
 
     void CheckEnemyType()
@@ -107,7 +123,7 @@ public class LevelUpUI : MonoBehaviour
         }
         for (int i = 0; i < m_minionTypeList.Count; i++)
         {
-            if (m_minionTypeList[i] == true)
+            if (m_minionTypeList[i] == true && m_levelList[i]<10)
             {
                 m_nowFrame = i;
                 return;
@@ -133,18 +149,18 @@ public class LevelUpUI : MonoBehaviour
                 m_levelList[i] = target.m_Level;
                 m_HPList[i] = target.m_maxHP;
                 m_damageList[i] = target.m_Damage;
-                m_speedList[i] = target.m_Speed;
 
-                m_plusHPList[i] = target.m_AddHp;
-                m_plusDamageList[i] = target.m_AddDamage;
-                m_plusSpeedList[i]= target.m_AddSpeed;
+                if (m_levelList[i] < 10)
+                {
+                    m_plusHPList[i] = target.m_StatusList[target.m_Level].HP - target.m_StatusList[target.m_Level - 1].HP;
+                    m_plusDamageList[i] = target.m_StatusList[target.m_Level].Attack - target.m_StatusList[target.m_Level - 1].Attack;
+                }
             }
             else
             {
                 m_levelList[i] = 0;
                 m_HPList[i] = 0;
                 m_damageList[i] = 0;
-                m_speedList[i] = 0.0f;
             }
         }
     }
@@ -156,7 +172,6 @@ public class LevelUpUI : MonoBehaviour
             ChangeLevel(m_levelTextList[i], m_levelList[i] );
             ChangeHP(m_HPTextList[i], m_HPList[i]);
             ChangeDamage(m_DamageTextList[i], m_damageList[i]);
-            ChangeSpeed(m_SpeedTextList[i], m_speedList[i]);
         }
     }
 
@@ -175,10 +190,6 @@ public class LevelUpUI : MonoBehaviour
         text.text = "POWER : " + damage;
     }
 
-    void ChangeSpeed(TextMeshProUGUI text, float speed)
-    {
-        text.text = "SPEED : " + speed;
-    }
 
     void ShowButton()
     {
@@ -196,6 +207,10 @@ public class LevelUpUI : MonoBehaviour
             {
                 m_buttonList[i].interactable = true;
             }
+            if (m_levelList[i] == 10)
+            {
+                m_buttonList[i].interactable = false;
+            }
         }
     }
 
@@ -204,11 +219,9 @@ public class LevelUpUI : MonoBehaviour
         ChangePlusLevel(m_plusLevelTextList[num], m_plusLevelList[num]);
         ChangePlusHP(m_plusHPTextList[num], m_plusHPList[num]);
         ChangePlusDamage(m_plusDamageTextList[num], m_plusDamageList[num]);
-        ChangePlusSpeed(m_plusSpeedTextList[num], m_plusSpeedList[num]);
         m_plusLevelTextList[num].gameObject.SetActive(true);
         m_plusHPTextList[num].gameObject.SetActive(true);
         m_plusDamageTextList[num].gameObject.SetActive(true) ;
-        m_plusSpeedTextList[num].gameObject .SetActive(true) ;
     }
 
     void HidePlusStatus(int num)
@@ -216,7 +229,6 @@ public class LevelUpUI : MonoBehaviour
         m_plusLevelTextList[num].gameObject.SetActive(false);
         m_plusHPTextList[num].gameObject.SetActive(false);
         m_plusDamageTextList[num].gameObject.SetActive(false);
-        m_plusSpeedTextList[num].gameObject.SetActive(false);
     }
 
     void HideButton()
@@ -248,11 +260,6 @@ public class LevelUpUI : MonoBehaviour
         text.text = "+" + addDamage;
     }
 
-    void ChangePlusSpeed(TextMeshProUGUI text, float addSpeed)
-    {
-        text.text = "+" + (int)addSpeed;
-    }
-
     public void Move_Up()
     {
         if (m_nowFrame == -1)
@@ -264,9 +271,10 @@ public class LevelUpUI : MonoBehaviour
             int moveNum = -1;
             for(int i = m_nowFrame-1; i >= 0; i--)
             {
-                if (m_minionTypeList[i] == true)
+                if (m_minionTypeList[i] == true && m_levelList[i]<10)
                 {
                     moveNum = i;
+                    break;
                 }
             }
             if(moveNum==-1)
@@ -281,6 +289,7 @@ public class LevelUpUI : MonoBehaviour
             // 次の枠を表示
             m_levelUpFrameList[m_nowFrame].SetActive(true);
             ShowPlusStatus(m_nowFrame);
+            ShowPlusTotalPoint();
         }
         else
         {
@@ -299,9 +308,10 @@ public class LevelUpUI : MonoBehaviour
             int moveNum = -1;
             for (int i = m_nowFrame + 1; i <= 6; i++)
             {
-                if (m_minionTypeList[i] == true)
+                if (m_minionTypeList[i] == true && m_levelList[i] < 10)
                 {
                     moveNum = i;
+                    break;
                 }
             }
             if (moveNum == -1)
@@ -316,6 +326,7 @@ public class LevelUpUI : MonoBehaviour
             // 次の枠を表示
             m_levelUpFrameList[m_nowFrame].SetActive(true);
             ShowPlusStatus(m_nowFrame);
+            ShowPlusTotalPoint();
         }
         else
         {
@@ -329,13 +340,34 @@ public class LevelUpUI : MonoBehaviour
         {
             return;
         }
+        int point = 0;
+        if (m_levelList[m_nowFrame] < 6)
+        {
+            point = 1;
+        }
+        else
+        {
+            point = 2;
+        }
         // ステータスを反映
-        m_minionController.LevelUp((Minion.MINION_TYPE)m_nowFrame);
+        m_minionController.LevelUp((Minion.MINION_TYPE)m_nowFrame,point);
         // テキストを更新
         GetStatus();
         ShowStatus();
+        GetTotalPoint();
+        ShowPlusTotalPoint();
+        ShowPlusStatus(m_nowFrame);
+        if (m_levelList[m_nowFrame] == 10)
+        {
+            HidePlusStatus(m_nowFrame);
+            HideFrame();
+            SetFirstFrame();
+            ShowPlusTotalPoint();
+            ShowButton();
+            m_levelUpFrameList[m_nowFrame].SetActive(true);
+        }
         // もう一度レベルアップできるか確認
-        if(m_minionController.m_LevelUpPoint==0)
+        if (m_minionController.m_LevelUpPoint==0)
         {
             HidePlusStatus(m_nowFrame);
             HideButton();
@@ -370,14 +402,11 @@ public class LevelUpUI : MonoBehaviour
         {
             damage.gameObject.SetActive(false);
         }
-        foreach (var speed in m_plusSpeedTextList)
-        {
-            speed.gameObject.SetActive(false);
-        }
         foreach (var button in m_buttonList)
         {
             button.interactable = false;
         }
+        m_plusPointText.gameObject.SetActive(false);
     }
 
 }

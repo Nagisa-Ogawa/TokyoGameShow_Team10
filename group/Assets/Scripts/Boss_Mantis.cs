@@ -430,6 +430,7 @@ public class Boss_Mantis : Enemy
         }
         else
         {
+            m_enemyController.StartCoroutine(m_enemyController.ChangeScene());
             // ¢Š«‚µ‚½“G‚ğ‚·‚×‚Ä”j‰ó
             DeadAllEnemy();
             m_minionController.AddExperiencePoint(m_levelPoint);

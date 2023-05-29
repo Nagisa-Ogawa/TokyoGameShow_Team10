@@ -270,8 +270,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_mode: 0
   m_type: 6
-  m_HP: 3
-  m_damage: 1
+  m_HP: 4
+  m_damage: 3
   m_renderer: {fileID: 8581922048600788609}
   m_spriteRenderer: {fileID: 8581922048600788609}
   m_addAlpha: 0.02
@@ -289,10 +289,40 @@ MonoBehaviour:
   m_stopAttackBossDistance: 5
   m_Param: {fileID: 11400000, guid: 0233a49b32b0659458e2e0ebec4bbf45, type: 2}
   m_attackCollider: {fileID: 3380113475738247813}
+  m_statusList:
+  - HP: 70
+    Attack: 20
+    Speed: 0
+  - HP: 70
+    Attack: 24
+    Speed: 0
+  - HP: 70
+    Attack: 29
+    Speed: 0
+  - HP: 117
+    Attack: 33
+    Speed: 0
+  - HP: 117
+    Attack: 38
+    Speed: 0
+  - HP: 117
+    Attack: 42
+    Speed: 0
+  - HP: 164
+    Attack: 46
+    Speed: 0
+  - HP: 164
+    Attack: 51
+    Speed: 0
+  - HP: 164
+    Attack: 55
+    Speed: 0
+  - HP: 210
+    Attack: 60
+    Speed: 0
   m_level: 1
   m_addHp: 5
   m_addDamage: 1
-  m_addSpeed: 1
   m_shadow: {fileID: 7132508076037447544}
 --- !u!50 &-6042409668119381846
 Rigidbody2D:

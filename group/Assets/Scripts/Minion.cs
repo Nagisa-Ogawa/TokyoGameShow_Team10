@@ -76,6 +76,16 @@ public class Minion:MonoBehaviour
     protected AttackCollider m_attackCollider = null;
 
     // レベルアップ関係
+    [System.Serializable]
+    public struct LEVEL_UP_STATUS
+    {
+        public int HP;
+        public int Attack;
+        public float Speed;
+    }
+    [SerializeField]
+    private List<LEVEL_UP_STATUS> m_statusList = new List<LEVEL_UP_STATUS>();
+    public List<LEVEL_UP_STATUS> m_StatusList { get { return m_statusList; } protected set { m_statusList = value; }}
     [SerializeField]
     protected int m_level = 1;
     public int m_Level { get { return m_level; } protected set {  m_level = value; } }
@@ -85,9 +95,6 @@ public class Minion:MonoBehaviour
     [SerializeField]
     protected int m_addDamage = 1;
     public int m_AddDamage { get {  return m_addDamage; } protected set { m_addDamage = value; } }
-    [SerializeField]
-    protected int m_addSpeed = 1;
-    public int m_AddSpeed { get {  return m_addSpeed; } protected set { m_addSpeed = value; } }
     // 通常攻撃時の残像関係
     [SerializeField]
     protected GameObject m_shadow = null;
@@ -104,7 +111,13 @@ public class Minion:MonoBehaviour
     protected void Start()
     {
         m_pos = transform.position;
-        m_maxHP = m_HP;
+        m_maxHP = m_statusList[m_level - 1].HP;
+        m_HP = m_maxHP;
+        m_damage = m_statusList[m_level - 1].Attack;
+        if (m_type == MINION_TYPE.DRAGONFLY)
+        {
+            m_attackCoolDown = m_statusList[m_level - 1].Speed;
+        }
         m_shadow.SetActive(false);
     }
 
@@ -474,11 +487,14 @@ public class Minion:MonoBehaviour
     {
         Debug.Log("レベルアップ");
         m_level++;
-        m_maxHP += m_addHp;
+        m_maxHP = m_statusList[m_level - 1].HP;
         m_HP = m_maxHP;
-        m_damage += m_addDamage;
-        m_speed += m_addSpeed;
+        m_damage = m_statusList[m_level - 1].Attack;
         m_hpui.GetComponent<MinionHPUI>().ChangeMax(m_maxHP);
+        if (m_type == MINION_TYPE.DRAGONFLY)
+        {
+            m_attackCoolDown = m_statusList[m_level - 1].Speed;
+        }
         // m_chaseSpeed += m_addSpeed;
     }
 

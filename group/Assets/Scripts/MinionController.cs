@@ -33,10 +33,10 @@ public class MinionController : MonoBehaviour
     private int m_level = 0;
     public int m_Level { get { return m_level; } private set { m_level = value; } }
     [SerializeField]
-    private int m_levelUpNum = 5;
-    [SerializeField]
     private int m_experiencePoint = 0;
     public int m_LevelUpPoint = 0;
+    [SerializeField]
+    private List<int> m_levelPointList=new List<int>();
     // Start is called before the first frame update
     void Start()
     {
@@ -222,19 +222,16 @@ public class MinionController : MonoBehaviour
     public void AddExperiencePoint(int point)
     {
         m_experiencePoint += point;
-        if (m_experiencePoint >= m_levelUpNum)
+        if (m_experiencePoint >= m_levelPointList[m_level])
         {
-            // m_level++;
+            m_level++;
             m_LevelUpPoint++;
-            m_experiencePoint -= m_levelUpNum;
-            //// レベルアップごとに必要経験値が変わるならリストを使用
-            //m_minions[0].LevelUp();
         }
     }
 
-    public void LevelUp(Minion.MINION_TYPE type)
+    public void LevelUp(Minion.MINION_TYPE type,int point)
     {
-        m_LevelUpPoint--;
+        m_LevelUpPoint -= point;
         foreach(var minion in m_Minions)
         {
             if(minion.m_type== type)
