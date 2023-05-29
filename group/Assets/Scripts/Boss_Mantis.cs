@@ -123,8 +123,7 @@ public class Boss_Mantis : Enemy
 
                     m_rigidbody.bodyType = RigidbodyType2D.Kinematic;
                     m_rigidbody.velocity = Vector3.zero;
-                    // m_choice = Random.Range(0, 3);
-                    m_choice = 2;
+                    m_choice = Random.Range(0, 3);
                     if (m_choice == 2 && CheckDeadAllEnemy() == false)
                     {
                         m_choice = Random.Range(0, 2);
@@ -440,7 +439,6 @@ public class Boss_Mantis : Enemy
             m_mantisMode = BOSS_MANTIS_MODE.DEAD;
             m_mode = ENEMY_MODE.DEAD;
             m_minionController.ChangeMode(Minion.MINION_MODE.MOVE_ENEMY);
-            m_enemyController.CheckBecomeMinion(this);
         }
     }
 

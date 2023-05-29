@@ -222,7 +222,7 @@ public class MinionController : MonoBehaviour
     public void AddExperiencePoint(int point)
     {
         m_experiencePoint += point;
-        if (m_experiencePoint >= m_levelPointList[m_level])
+        if (m_experiencePoint >= m_levelPointList[m_level]&&m_level<10)
         {
             m_level++;
             m_LevelUpPoint++;

@@ -28,6 +28,9 @@ public class Enemy : MonoBehaviour {
         MANTIS,
         BOSS_ANTS,
         BOSS_MANTIS,
+        BOSS_BUTTERFLY,
+        BOSS_DRAGONFLY,
+        BOSS_SPIDER,
     }
 
     public enum TARGET_TYPE

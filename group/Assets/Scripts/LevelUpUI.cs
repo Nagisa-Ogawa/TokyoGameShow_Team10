@@ -372,6 +372,7 @@ public class LevelUpUI : MonoBehaviour
             HidePlusStatus(m_nowFrame);
             HideButton();
             HideFrame();
+            m_plusPointText.gameObject.SetActive(false);
         }
     }
 
