@@ -1,6 +1,7 @@
 using Microsoft.Win32.SafeHandles;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -40,18 +41,26 @@ public class MinionController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        for(int i = 0; i < 7; i++)
+        if (GameManager.Instance!=null&& GameManager.Instance.m_MinionLevelList.Count > 0)
         {
-            var minion = Instantiate(m_minionPrefabList[i]);
-            Vector3 pos = new Vector3(Random.Range(-3.0f, 3.0f), Random.Range(-3.0f, 3.0f), 0.0f)+m_player.transform.position;
-            // float angleZ = Random.Range(0, 360.0f);
-            minion.transform.position = pos;
-            // minion.transform.eulerAngles = new Vector3(0.0f, 0.0f, angleZ);
-            m_minions.Add(minion.GetComponent<MinionA>());
-            // uiçÏê¨
-            var hpui = Instantiate(m_hpui, m_hpUIParent.transform);
-            minion.GetComponent<MinionA>().m_hpui = hpui;
-            hpui.GetComponent<MinionHPUI>().m_minion = minion.GetComponent<MinionA>();
+            CreateMinionStart();
+            m_level = GameManager.Instance.m_Level;
+            m_experiencePoint = GameManager.Instance.m_ExperiencePoint;
+            m_LevelUpPoint=GameManager.Instance.m_LevelUpPoint;
+        }
+        else
+        {
+            for (int i = 0; i < 7; i++)
+            {
+                var minion = Instantiate(m_minionPrefabList[i]);
+                Vector3 pos = new Vector3(Random.Range(-3.0f, 3.0f), Random.Range(-3.0f, 3.0f), 0.0f) + m_player.transform.position;
+                minion.transform.position = pos;
+                m_minions.Add(minion.GetComponent<MinionA>());
+                // uiçÏê¨
+                var hpui = Instantiate(m_hpui, m_hpUIParent.transform);
+                minion.GetComponent<MinionA>().m_hpui = hpui;
+                hpui.GetComponent<MinionHPUI>().m_minion = minion.GetComponent<MinionA>();
+            }
         }
         m_mode = Minion.MINION_MODE.FOLLOW;
         ChangeMode(Minion.MINION_MODE.FOLLOW);
@@ -184,7 +193,7 @@ public class MinionController : MonoBehaviour
         }
     }
 
-    public void RevivalMinion(Vector3 pos)
+    public void RevivalMinion()
     {
         foreach (Minion minion in m_Minions)
         {
@@ -197,11 +206,8 @@ public class MinionController : MonoBehaviour
             }
             else
             {
-                minion.m_mode = m_mode;
-                minion.transform.position = pos;
-                minion.m_HP = minion.m_maxHP;
-                minion.gameObject.SetActive(true);
-                minion.m_hpui.SetActive(true);
+                // Ç±Ç±Ç≈éÄÇÒÇ≈Ç¢ÇΩÉ~ÉjÉIÉìÇdestroy
+                Destroy(minion.gameObject);
             }
         }
     }
@@ -256,5 +262,42 @@ public class MinionController : MonoBehaviour
         {
             minion.SetStatus(target);
         }
+    }
+
+    public void CreateMinionStart()
+    {
+        var typeList = GameManager.Instance.m_MinionTypeList;
+        var levelList = GameManager.Instance.m_MinionLevelList;
+        for (int i = 0; i < typeList.Count; i++)
+        {
+            var minion = Instantiate(m_minionPrefabList[(int)typeList[i]]);
+            Vector3 pos = new Vector3(Random.Range(-3.0f, 3.0f), Random.Range(-3.0f, 3.0f), 0.0f) + m_player.transform.position;
+            minion.transform.position = pos;
+            m_minions.Add(minion.GetComponent<MinionA>());
+            // uiçÏê¨
+            var hpui = Instantiate(m_hpui, m_hpUIParent.transform);
+            minion.GetComponent<MinionA>().m_hpui = hpui;
+            minion.GetComponent<MinionA>().SetLevel(levelList[i]);
+            hpui.GetComponent<MinionHPUI>().m_minion = minion.GetComponent<MinionA>();
+        }
+    }
+
+    public void SaveMinionData()
+    {
+        var typeList= new List<Minion.MINION_TYPE>();
+        var levelList=new List<int>();
+        for(int i=0;i<m_Minions.Count;i++)
+        {
+            if (m_Minions[i].m_mode != Minion.MINION_MODE.DEAD)
+            {
+                typeList.Add(m_Minions[i].m_type);
+                levelList.Add(m_Minions[i].m_Level);
+            }
+            else
+            {
+                Destroy(m_minions[i].gameObject);
+            }
+        }
+        GameManager.Instance.UpdateData(m_level, m_LevelUpPoint, m_experiencePoint, typeList, levelList);
     }
 }

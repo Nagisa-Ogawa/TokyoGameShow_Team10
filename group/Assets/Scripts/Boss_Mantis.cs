@@ -429,7 +429,6 @@ public class Boss_Mantis : Enemy
         }
         else
         {
-            m_enemyController.StartCoroutine(m_enemyController.ChangeScene());
             // è¢ä´ÇµÇΩìGÇÇ∑Ç◊ÇƒîjâÛ
             DeadAllEnemy();
             m_minionController.AddExperiencePoint(m_levelPoint);
@@ -439,6 +438,7 @@ public class Boss_Mantis : Enemy
             m_mantisMode = BOSS_MANTIS_MODE.DEAD;
             m_mode = ENEMY_MODE.DEAD;
             m_minionController.ChangeMode(Minion.MINION_MODE.MOVE_ENEMY);
+            m_enemyController.StartCoroutine(m_enemyController.ChangeScene());
         }
     }
 

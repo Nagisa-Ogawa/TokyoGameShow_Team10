@@ -507,4 +507,8 @@ public class Minion:MonoBehaviour
         m_damage= minion.m_damage;
     }
 
+    public void SetLevel(int level)
+    {
+        m_Level = level;
+    }
 }

@@ -71,9 +71,9 @@ public class LevelUpUI : MonoBehaviour
     public void Init()
     {
         CheckEnemyType();
-        SetFirstFrame();
-        ShowButton();
         GetStatus();
+        ShowButton();
+        SetFirstFrame();
         ShowStatus();
         GetTotalPoint();
         if(m_minionController.m_LevelUpPoint>0)
@@ -123,7 +123,7 @@ public class LevelUpUI : MonoBehaviour
         }
         for (int i = 0; i < m_minionTypeList.Count; i++)
         {
-            if (m_minionTypeList[i] == true && m_levelList[i]<10)
+            if (m_minionTypeList[i] == true && m_buttonList[i].interactable==true)
             {
                 m_nowFrame = i;
                 return;
@@ -207,7 +207,11 @@ public class LevelUpUI : MonoBehaviour
             {
                 m_buttonList[i].interactable = true;
             }
-            if (m_levelList[i] == 10)
+            if(m_levelList[i] > 5 && m_minionController.m_LevelUpPoint < 2)
+            {
+                m_buttonList[i].interactable = false;
+            }
+            else if (m_levelList[i] == 10)
             {
                 m_buttonList[i].interactable = false;
             }
@@ -271,7 +275,7 @@ public class LevelUpUI : MonoBehaviour
             int moveNum = -1;
             for(int i = m_nowFrame-1; i >= 0; i--)
             {
-                if (m_minionTypeList[i] == true && m_levelList[i]<10)
+                if (m_buttonList[i].interactable)
                 {
                     moveNum = i;
                     break;
@@ -308,7 +312,7 @@ public class LevelUpUI : MonoBehaviour
             int moveNum = -1;
             for (int i = m_nowFrame + 1; i <= 6; i++)
             {
-                if (m_minionTypeList[i] == true && m_levelList[i] < 10)
+                if (m_buttonList[i].interactable)
                 {
                     moveNum = i;
                     break;
@@ -351,28 +355,19 @@ public class LevelUpUI : MonoBehaviour
         }
         // ステータスを反映
         m_minionController.LevelUp((Minion.MINION_TYPE)m_nowFrame,point);
+        HideAll();
         // テキストを更新
+        CheckEnemyType();
         GetStatus();
+        ShowButton();
+        SetFirstFrame();
         ShowStatus();
         GetTotalPoint();
-        ShowPlusTotalPoint();
-        ShowPlusStatus(m_nowFrame);
-        if (m_levelList[m_nowFrame] == 10)
+        if (m_minionController.m_LevelUpPoint > 0)
         {
-            HidePlusStatus(m_nowFrame);
-            HideFrame();
-            SetFirstFrame();
+            ShowPlusStatus(m_nowFrame);
             ShowPlusTotalPoint();
-            ShowButton();
             m_levelUpFrameList[m_nowFrame].SetActive(true);
-        }
-        // もう一度レベルアップできるか確認
-        if (m_minionController.m_LevelUpPoint==0)
-        {
-            HidePlusStatus(m_nowFrame);
-            HideButton();
-            HideFrame();
-            m_plusPointText.gameObject.SetActive(false);
         }
     }
 

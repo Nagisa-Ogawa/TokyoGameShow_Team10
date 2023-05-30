@@ -128,6 +128,7 @@ public class EnemyController : MonoBehaviour
 
     public IEnumerator ChangeScene()
     {
+        m_minionController.SaveMinionData();
         yield return new WaitForSeconds(3.0f);
         SceneManager.LoadScene("GameClear");
     }

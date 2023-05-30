@@ -217,7 +217,7 @@ public class Player : MonoBehaviour
         {
             m_hp = m_maxHP;
             // Ž€‚ñ‚Å‚¢‚éƒ~ƒjƒIƒ“‚ð•œŠˆ
-            m_minionController.RevivalMinion(collision.transform.position);
+            m_minionController.RevivalMinion();
             // “G‚à•œŠˆ
             m_enemyController.ActiveAll();
             m_canLevelUp = true;
