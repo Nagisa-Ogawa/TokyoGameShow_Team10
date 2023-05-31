@@ -254,8 +254,8 @@ MonoBehaviour:
   m_type: 1
   m_hpui: {fileID: 0}
   m_rigidbody: {fileID: 2639703910480705716}
-  m_HP: 15
-  m_damage: 1
+  m_HP: 50
+  m_damage: 10
   m_speed: 2
   m_mutekitime: 3
   m_mutekiFlag: 0
@@ -267,20 +267,17 @@ MonoBehaviour:
   m_moveDistance: 3
   m_enemyAttack: {fileID: 1606219555076759578}
   m_renderer: {fileID: 2639703910480705718}
-  m_addAlpha: 0.01
   m_chaseSpeed: 5
   m_attackTime: 0.5
   m_nowTime: 0
-  m_afterAttackTime: 0.3
-  m_attackCoolDown: 0.3
+  m_afterAttackTime: 0.5
+  m_attackCoolDown: 0.5
   m_attackedTime: 0
   m_color: {r: 0, g: 0, b: 0, a: 0}
   m_canAttack: 1
   isRange: 0
   m_shadow: {fileID: 2654819058688543973}
   m_rangeAttack: {fileID: 8582040241008435533}
-  m_addAlphaRange: 0.02
-  m_attackTimeRange: 2
   m_rangeAttackCoolDown: 3
   m_rangeAttackTime: 1.5
   m_rangeAfterAttackTime: 1

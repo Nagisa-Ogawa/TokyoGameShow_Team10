@@ -100,7 +100,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_enemy: {fileID: 2639703910480705712}
   m_rangeDistance: 2
-  m_rangeAttackDamage: 2
+  m_rangeAttackDamage: 20
 --- !u!61 &2131556692938009371
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -254,8 +254,8 @@ MonoBehaviour:
   m_type: 6
   m_hpui: {fileID: 0}
   m_rigidbody: {fileID: 2639703910480705716}
-  m_HP: 15
-  m_damage: 1
+  m_HP: 70
+  m_damage: 20
   m_speed: 2
   m_mutekitime: 3
   m_mutekiFlag: 0

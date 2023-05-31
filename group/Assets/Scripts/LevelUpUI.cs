@@ -340,6 +340,7 @@ public class LevelUpUI : MonoBehaviour
 
     public void Decide()
     {
+        int beferFrame = -1;
         if(m_minionController.m_LevelUpPoint==0)
         {
             return;
@@ -353,6 +354,7 @@ public class LevelUpUI : MonoBehaviour
         {
             point = 2;
         }
+        beferFrame = m_nowFrame;
         // ステータスを反映
         m_minionController.LevelUp((Minion.MINION_TYPE)m_nowFrame,point);
         HideAll();
@@ -360,7 +362,14 @@ public class LevelUpUI : MonoBehaviour
         CheckEnemyType();
         GetStatus();
         ShowButton();
-        SetFirstFrame();
+        if (m_buttonList[beferFrame].interactable==false) 
+        {
+            SetFirstFrame();
+        }
+        else
+        {
+            m_nowFrame = beferFrame;
+        }
         ShowStatus();
         GetTotalPoint();
         if (m_minionController.m_LevelUpPoint > 0)

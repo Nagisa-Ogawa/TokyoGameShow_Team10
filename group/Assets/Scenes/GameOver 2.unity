@@ -815,7 +815,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   buttons:
   - {fileID: 1827405947}
-  - {fileID: 0}
 --- !u!114 &1827405951
 MonoBehaviour:
   m_ObjectHideFlags: 0

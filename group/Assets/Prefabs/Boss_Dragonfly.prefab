@@ -100,7 +100,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_enemy: {fileID: 0}
   m_rangeDistance: 4
-  m_rangeAttackDamage: 2
+  m_rangeAttackDamage: 20
 --- !u!60 &6106522974373155311
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -230,7 +230,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_enemy: {fileID: 0}
   m_rangeDistance: 0
-  m_rangeAttackDamage: 2
+  m_rangeAttackDamage: 40
 --- !u!60 &6786446392027300825
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -430,8 +430,8 @@ MonoBehaviour:
   m_type: 10
   m_hpui: {fileID: 0}
   m_rigidbody: {fileID: 6394145888080149058}
-  m_HP: 3
-  m_damage: 2
+  m_HP: 1000
+  m_damage: 20
   m_speed: 4
   m_mutekitime: 3
   m_mutekiFlag: 0

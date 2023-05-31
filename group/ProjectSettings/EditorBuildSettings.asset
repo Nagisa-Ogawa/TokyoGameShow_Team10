@@ -9,6 +9,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Title.unity
     guid: 7400ad8221dd7c445bd89dad2be7f8c7
   - enabled: 1
+    path: Assets/Scenes/StageSelect.unity
+    guid: 37b10e593efbeff488ab2f1c9939d38c
+  - enabled: 1
     path: Assets/Scenes/Stage1.unity
     guid: 2cda990e2423bbf4892e6590ba056729
   - enabled: 1
@@ -23,9 +26,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/GameClear.unity
     guid: d942b2fec3467614c84318ed3612dac7
-  - enabled: 1
-    path: Assets/Scenes/StageSelect.unity
-    guid: 37b10e593efbeff488ab2f1c9939d38c
   - enabled: 1
     path: Assets/Scenes/GameOver 1.unity
     guid: 49eeeb337040fd742b7002f70a1bafec

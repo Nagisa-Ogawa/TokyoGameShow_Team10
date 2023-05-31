@@ -100,7 +100,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_enemy: {fileID: 0}
   m_rangeDistance: 0
-  m_rangeAttackDamage: 2
+  m_rangeAttackDamage: 30
 --- !u!60 &3729745282627409024
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -266,7 +266,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_enemy: {fileID: 0}
   m_rangeDistance: 3
-  m_rangeAttackDamage: 2
+  m_rangeAttackDamage: 50
 --- !u!60 &1415047129021574704
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -480,8 +480,8 @@ MonoBehaviour:
   m_type: 11
   m_hpui: {fileID: 0}
   m_rigidbody: {fileID: 6394145888080149058}
-  m_HP: 50
-  m_damage: 2
+  m_HP: 1000
+  m_damage: 40
   m_speed: 4
   m_mutekitime: 3
   m_mutekiFlag: 0
@@ -508,7 +508,7 @@ MonoBehaviour:
   m_rangeAttackTime: 2
   m_rangeAfterAttackTime: 1
   m_rangeRenderere: {fileID: 671911907845864253}
-  m_levelPoint: 1
+  m_levelPoint: 100
   isReviv: 1
   m_rangeAttackB: {fileID: 2101247117704670015}
   m_rangeRenderereB: {fileID: 2101247117704670014}

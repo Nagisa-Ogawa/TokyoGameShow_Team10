@@ -106,8 +106,8 @@ MonoBehaviour:
   m_type: 0
   m_hpui: {fileID: 0}
   m_rigidbody: {fileID: 2639703910480705716}
-  m_HP: 10
-  m_damage: 2
+  m_HP: 120
+  m_damage: 5
   m_speed: 2
   m_mutekitime: 3
   m_mutekiFlag: 0
