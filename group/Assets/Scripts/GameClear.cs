@@ -19,6 +19,6 @@ public class GameClear : MonoBehaviour
 
     private void OnDECISION()
     {
-        SceneManager.LoadScene("Stage1");
+        SceneManager.LoadScene("StageSelect");
     }
 }
