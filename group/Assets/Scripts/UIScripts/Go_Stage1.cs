@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class MoveTitle : MonoBehaviour
-{   public void OnStart()
+public class Go_Stage1 : MonoBehaviour
+{
+    public void OnClick()
     {
-        SceneManager.LoadScene("Title");
+        SceneManager.LoadScene("Stage1");
     }
 }

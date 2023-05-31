@@ -1,13 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-public class StartButton : MonoBehaviour
+public class Go_Stage3 : MonoBehaviour
 {
-    public void OnStart()
+    public void OnClick()
     {
-        SceneManager.LoadScene("StageSelect");
+        SceneManager.LoadScene("Stage3");
     }
 }
