@@ -49,6 +49,7 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        gameObject.transform.position = GameObject.FindGameObjectWithTag("Home").transform.position;
         rigidBody=GetComponent<Rigidbody2D>();
         m_pAttack.gameObject.SetActive(false);
         m_attackDir = Vector2.zero;
@@ -201,7 +202,7 @@ public class Player : MonoBehaviour
     IEnumerator GameOver()
     {
         yield return new WaitForSeconds(2.0f);
-        SceneManager.LoadScene("GameOver");
+        SceneManager.LoadScene("GameOver 1");
     }
 
     private void FixedUpdate()

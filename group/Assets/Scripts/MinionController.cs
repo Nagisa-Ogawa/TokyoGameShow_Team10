@@ -222,7 +222,7 @@ public class MinionController : MonoBehaviour
             }
         }
         yield return new WaitForSeconds(2.0f);
-        SceneManager.LoadScene("GameOver");
+        SceneManager.LoadScene("GameOver 1");
     }
 
     public void AddExperiencePoint(int point)
